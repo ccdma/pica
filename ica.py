@@ -243,12 +243,13 @@ def weyl_samples(low_k: float, delta_k: float, length: int) -> np.ndarray:
 """
 複素数系列を生成
 https://www.jstage.jst.go.jp/article/japannctam/55/0/55_0_81/_pdf/-char/ja
+n: 何倍角の系列か
 """
-def const_powerd_samples_2(a_0: complex, length: int) -> np.ndarray:
+def const_powerd_samples(n: int, a_0: complex, length: int) -> np.ndarray:
 	result = []
 	result.append(a_0)
 	for _ in range(length-1):
-		a_0 = complex(2*a_0.real**2-1, 2*a_0.real*a_0.imag)
+		a_0 = complex(eval_chebyt(n, a_0.real), eval_chebyu(n, a_0.imag))
 		result.append(a_0)
 	return np.array(result, dtype=complex)
 
