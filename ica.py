@@ -215,19 +215,6 @@ def chebyt_samples(deg: int, a0: float, length: int) -> np.ndarray:
 	return np.array(result) 
 
 """
-チェビシェフ系列を生成（第二種）
-deg: チェビシェフ多項式の次数
-a0: 初期値
-length: 系列の長さ
-"""
-def chebyu_samples(deg: int, a0: float, length: int) -> np.ndarray:
-	result = [a0]
-	for _ in range(length-1):
-		a0 = eval_chebyu(deg, a0)
-		result.append(a0)
-	return np.array(result) 
-
-"""
 ワイル系列を生成
 return ndarray(dtype=complex)
 https://www.jstage.jst.go.jp/article/transcom/advpub/0/advpub_2017EBP3139/_article/-char/ja/
@@ -249,7 +236,7 @@ def const_powerd_samples(n: int, a_0: complex, length: int) -> np.ndarray:
 	result = []
 	result.append(a_0)
 	for _ in range(length-1):
-		a_0 = complex(eval_chebyt(n, a_0.real), eval_chebyu(n, a_0.imag))
+		a_0 = complex(eval_chebyt(n, a_0.real), eval_chebyu(n-1, a_0.real)*a_0.imag)
 		result.append(a_0)
 	return np.array(result, dtype=complex)
 
