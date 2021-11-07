@@ -14,6 +14,7 @@ class FastICAResult:
 	Y: np.ndarray
 	X_whiten: np.ndarray
 	X_center: np.ndarray
+	W: np.ndarray
 
 """
 X: represents observed data
@@ -74,7 +75,9 @@ def FastICA(X: np.ndarray, _assert: bool=True) -> FastICAResult:
 
 	Y = B.T @ X_whiten
 
-	return FastICAResult(Y=Y, X_whiten=X_whiten, X_center=X_center)
+	W = B.T @ Atilda
+
+	return FastICAResult(Y=Y, X_whiten=X_whiten, X_center=X_center, W=W)
 
 
 """
@@ -152,7 +155,7 @@ def CFastICA(X: np.ndarray, _assert: bool=True) -> CFastICAResult:
 		assert np.allclose(B @ _H(B), np.eye(B.shape[0]), atol=1.e-10) # Bが直交行列となっていることを検証
 
 	Y = _H(B) @ X_whiten
-
+	
 	return CFastICAResult(Y)
 
 # ica = FastICA(n_components=SERIES, random_state=0)
@@ -197,6 +200,16 @@ def BatchEASI(X: np.ndarray):
 	Y = np.array(YT).T
 	return EASIResult(Y=Y)
 
+def simple_circulant_P(A, W):
+	G = W @ A
+	P = np.zeros(G.shape)
+	for i, g in enumerate(G):
+		mi = np.argmax(np.abs(g))
+		if g[mi] > 0:
+			P[i,mi] = 1
+		else:
+			P[i,mi] = -1
+	return P
 
 """
 チェビシェフ系列を生成（第一種）

@@ -1,4 +1,4 @@
-from pica.ica import *
+from ica import *
 import matplotlib.pyplot as plt
 import numpy as np
 
