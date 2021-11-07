@@ -233,8 +233,9 @@ https://www.jstage.jst.go.jp/article/japannctam/55/0/55_0_81/_pdf/-char/ja
 n: 何倍角の系列か
 a_0: 初期値（自然数mを用いて、np.exp(np.pi/n^m*1j)などと指定すると数値的に不安定）
 """
-def const_powerd_samples(n: int, a_0: complex, length: int) -> np.ndarray:
+def const_powerd_samples(n: int, rad_0: float, length: int) -> np.ndarray:
 	result = []
+	a_0 = np.exp(rad_0*1j)
 	result.append(a_0)
 	for _ in range(length-1):
 		a_0 = complex(eval_chebyt(n, a_0.real), eval_chebyu(n-1, a_0.real)*a_0.imag)
