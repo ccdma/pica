@@ -5,28 +5,30 @@ from ica import *
 SIGNALS = 2
 SAMPLINGS = 1000
 
-SC = np.array([ const_powerd_samples(i+2, np.pi/(i+6), SAMPLINGS) for i in range(SIGNALS)]) 
+S = np.array([ const_powerd_samples(i+2, np.pi/(i+6), SAMPLINGS) for i in range(SIGNALS)]) 
 
-S = []
-for s in SC:
-	S.append(s.real)
-	S.append(s.imag)
-S = np.array(S)
+# S = []
+# for s in SC:
+# 	S.append(s.real)
+# 	S.append(s.imag)
+# S = np.array(S)
 
-mean = np.mean(S,axis=1)
-S = S - np.array([np.full(SAMPLINGS, ave) for ave in mean ])
+# mean = np.mean(S,axis=1)
+# S = S - np.array([np.full(SAMPLINGS, ave) for ave in mean ])
 
-A = random_matrix(SIGNALS*2)
+A = random_matrix(SIGNALS)
 
 X = A @ S
 
-print(correlation(S))
+# print(correlation(S))
 
-res = FastICA(X, _assert=False)
+r_res = FastICA(X.real, _assert=False)
+i_res = FastICA(X.imag, _assert=False)
 
-P = simple_circulant_P(A, res.W)
-Y = res.Y
-Y = P.T @ res.Y
+r_P = simple_circulant_P(A, r_res.W)
+i_P = simple_circulant_P(A, i_res.W)
 
-plt.scatter(Y[0], Y[1])
+Y = r_P.T @ r_res.Y + i_P.T @ i_res.Y * 1j
+
+plt.scatter(Y[0].real, Y[0].imag)
 plt.show()
