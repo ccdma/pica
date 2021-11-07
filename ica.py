@@ -1,6 +1,6 @@
 import numpy.linalg as la
 import numpy as np
-from scipy.special import eval_chebyt
+from scipy.special import eval_chebyt, eval_chebyu
 import dataclasses
 
 @dataclasses.dataclass
@@ -202,7 +202,7 @@ def BatchEASI(X: np.ndarray):
 
 
 """
-チェビシェフ系列を生成
+チェビシェフ系列を生成（第一種）
 deg: チェビシェフ多項式の次数
 a0: 初期値
 length: 系列の長さ
@@ -211,6 +211,19 @@ def chebyt_samples(deg: int, a0: float, length: int) -> np.ndarray:
 	result = [a0]
 	for _ in range(length-1):
 		a0 = eval_chebyt(deg, a0)
+		result.append(a0)
+	return np.array(result) 
+
+"""
+チェビシェフ系列を生成（第二種）
+deg: チェビシェフ多項式の次数
+a0: 初期値
+length: 系列の長さ
+"""
+def chebyu_samples(deg: int, a0: float, length: int) -> np.ndarray:
+	result = [a0]
+	for _ in range(length-1):
+		a0 = eval_chebyu(deg, a0)
 		result.append(a0)
 	return np.array(result) 
 
