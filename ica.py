@@ -78,7 +78,7 @@ def FastICA(X: np.ndarray, _assert: bool=True) -> FastICAResult:
 
 
 """
-エルミート転置
+エルミート転置をする（随伴行列を求める）
 """
 def _H(P: np.ndarray):
 	return np.conjugate(P.T)
@@ -97,7 +97,7 @@ class CFastICAResult:
 複素数版FastICA
 https://www.cs.helsinki.fi/u/ahyvarin/papers/IJNS00.pdf
 """
-def CAFastICA(X: np.ndarray, _assert: bool=True) -> CFastICAResult:
+def CFastICA(X: np.ndarray, _assert: bool=True) -> CFastICAResult:
 	SAMPLE, SERIES = X.shape # (観測点数, 観測時間数)
 
 	# 中心化を行う（観測点ごとの平均であることに注意）
@@ -116,12 +116,9 @@ def CAFastICA(X: np.ndarray, _assert: bool=True) -> CFastICAResult:
 	if _assert:
 		assert np.allclose(np.cov(X_whiten), np.eye(X_whiten.shape[0]), atol=1.e-10) # 無相関化を確認（単位行列）
 
-	beta = 2.001953125
 	# ICAに使用する関数gとその微分g2（ここではgは４次キュムラント）
-	g = lambda bx : beta + np.tanh(bx) 
+	g = lambda bx : np.tanh(bx) 
 	g2 = lambda bx : 1+np.tanh(bx)
-	g = lambda bx : bx**3
-	g2 = lambda bx : 3*(bx**2)
 
 	I = X_whiten.shape[0]
 	B = np.array([[(np.random.rand()-0.5)+(np.random.rand()-0.5)*1j for i in range(I)] for j in range(I) ], dtype=np.complex) # X_whitenからYへの復元行列
@@ -139,15 +136,15 @@ def CAFastICA(X: np.ndarray, _assert: bool=True) -> CFastICAResult:
 			BiH = _H(B[:,i])
 			result = []
 			for x in X_whiten.T:
-				BiHx = BiH@x
+				BiHx = np.vdot(BiH,x)
 				BiHx2 = abs(BiHx)**2
 				row = x*np.conjugate(BiHx)*g(BiHx2) - (g(BiHx2)+BiHx2*g2(BiHx2))*B[:,i]
 				result.append(row)
 			B[:,i] = np.average(result, axis=0) # 不動点法
 			B[:,i] = B[:,i] - B[:,:i] @ _H(B[:,:i]) @ B[:,i] # 直交空間に射影
 			B[:,i] = B[:,i] / la.norm(B[:,i], ord=2) # L2ノルムで規格化
-			print(prevBi @ B[:,i])
-			if 1.0 - 1.e-8 < abs(prevBi @ B[:,i]) < 1.0 + 1.e-8: # （内積1 <=> ほとんど変更がなければ）
+			# print(abs(prevBi @ B[:,i]))
+			if 1.0 - 1.e-4 < abs(prevBi @ B[:,i]) < 1.0 + 1.e-4: # （内積1 <=> ほとんど変更がなければ）
 				break
 		else:
 			assert False
