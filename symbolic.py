@@ -26,5 +26,5 @@ res = FastICA(X, _assert=False)
 
 Y = res.Y
 
-plt.scatter(Y[1][:-1], Y[1][1:])
+plt.scatter(Y[2][:-1], Y[2][1:])
 plt.show()
