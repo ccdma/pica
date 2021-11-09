@@ -2,10 +2,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 from ica import *
 
-SIGNALS = 2
-SAMPLINGS = 1000
+np.random.seed(0)
 
-S = np.array([ const_powerd_samples(i+2, np.pi/(i+6), SAMPLINGS) for i in range(SIGNALS)]) 
+SIGNALS = 2
+SAMPLINGS = 300
+
+S = np.array([ const_powerd_samples(2, np.pi/(i+6), SAMPLINGS) for i in range(SIGNALS)]) 
 
 # S = []
 # for s in SC:
@@ -30,5 +32,20 @@ i_P = simple_circulant_P(A, i_res.W)
 
 Y = r_P.T @ r_res.Y + i_P.T @ i_res.Y * 1j
 
-plt.scatter(Y[0].real, Y[0].imag)
+fig, ax = plt.subplots(1, 3)
+for i in range(SIGNALS):
+	ax[0].scatter(S[i].real, S[i].imag, alpha=0.5)
+for i in range(SIGNALS):
+	ax[1].scatter(X[i].real, X[i].imag, alpha=0.5)
+for i in range(SIGNALS):
+	ax[2].scatter(Y[i].real, Y[i].imag, alpha=0.5)
+ax[0].set_title("source")
+ax[1].set_title("mixed")
+ax[2].set_title("reconstruct")
+
+fig.tight_layout()
+fig.suptitle("", x=0.1, y=0.97)
+fig.set_figheight(5)
+fig.set_figwidth(12)
+
 plt.show()
