@@ -7,7 +7,7 @@ np.random.seed(1)
 SIGNALS = 2
 SAMPLINGS = 300
 
-S = np.array([ const_powerd_samples(2, np.pi/(i+11), SAMPLINGS) for i in range(SIGNALS)]) 
+S = np.array([ const_powerd_samples(5, np.pi/(np.sqrt(2)+i), SAMPLINGS) for i in range(SIGNALS)]) 
 
 # S = []
 # for s in SC:
@@ -31,6 +31,8 @@ r_P = simple_circulant_P(A, r_res.W)
 i_P = simple_circulant_P(A, i_res.W)
 
 Y = r_P.T @ r_res.Y + i_P.T @ i_res.Y * 1j
+
+Y = Y/np.abs(Y)
 
 fig, ax = plt.subplots(1, 3)
 
