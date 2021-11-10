@@ -29,27 +29,48 @@ def cte(C: np.ndarray):
 SIGNALS = 3
 SAMPLINGS = 1000
 
-B = np.array([[ odd_or_even(np.random.randint(0, 10)) for i in range(SAMPLINGS) ] for _ in range(SIGNALS)])
-S = np.array([ chebyt_samples(2, 0.1+i/10, SAMPLINGS) for i in range(SIGNALS)])
+def test(signals: int, samplings: int, norm_scale: float):
 
-T = S * B
+    B = np.array([[ odd_or_even(np.random.randint(0, 10)) for i in range(samplings) ] for _ in range(signals)])
+    S = np.array([ chebyt_samples(2, 0.1+i/10, samplings) for i in range(signals)])
 
-print(correlation(T))
+    T = S * B
 
-A = random_matrix(SIGNALS)
+    print(correlation(T))
 
-X = A @ T + np.random.normal(0.0, 0.1, (SIGNALS, SAMPLINGS))
+    A = random_matrix(signals)
 
-res = FastICA(X, _assert=False)
+    X = A @ T + np.random.normal(0.0, norm_scale, (signals, samplings))
 
-Y = res.Y
-P = simple_circulant_P(A, res.W)
+    res = FastICA(X, _assert=False)
 
-S2 = P.T @ Y
+    Y = res.Y
+    P = simple_circulant_P(A, res.W)
 
-RB = np.sign(S2*S)
+    S2 = P.T @ Y
 
-# BER
-print(np.abs(RB - B).mean()/2)
-# CTE
-print(cte(res.W @ A))
+    RB = np.sign(S2*S)
+
+    # BER
+    cber = np.abs(RB - B).mean()/2
+    # CTE
+    ccte = cte(res.W @ A)
+    print(cber, ccte)
+
+    return (cber, ccte)
+
+scales = np.linspace(0.1, 0.2, 1)
+cber_avgs = []
+ccte_avgs = []
+for scale in scales:
+    cber_list = []
+    ccte_list = []
+    for _ in range(1):
+        cber, ccte = test(SIGNALS, SAMPLINGS, scale)
+        cber_list.append(cber)
+        ccte_list.append(ccte)
+    cber_avgs.append(np.mean(cber_list))
+    ccte_avgs.append(np.mean(ccte_list))
+
+plt.plot(scales, ccte_avgs)
+plt.show()
