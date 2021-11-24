@@ -267,6 +267,15 @@ def primitive_root_code(p: int, q: int) -> np.ndarray:
 	return np.array(result)
 
 """
+素数判定
+"""
+def is_prime(n):
+    n = abs(n)
+    if n == 2: return True
+    if n < 2 or n&1 == 0: return False
+    return pow(2, n-1, n) == 1
+
+"""
 原子根かどうかを判定する
 """
 def is_primitive_root(p: int, q: int) -> np.array:
@@ -276,6 +285,8 @@ def is_primitive_root(p: int, q: int) -> np.array:
 		return False
 	if p == 2:
 		return True
+	if not is_prime(p):
+		return False
 	prev = 1
 	for i in range(1, p-1):
 		prev = (prev*q)%p
