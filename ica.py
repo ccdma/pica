@@ -266,6 +266,23 @@ def primitive_root_code(p: int, q: int) -> np.ndarray:
 		prev = (prev * q)%p
 	return np.array(result)
 
+"""
+原子根かどうかを判定する
+"""
+def is_primitive_root(p: int, q: int) -> np.array:
+	if q >= p:
+		return False
+	if p <= 1:
+		return False
+	if p == 2:
+		return True
+	prev = 1
+	for i in range(1, p-1):
+		prev = (prev*q)%p
+		if prev == 1:
+			return False
+	return True
+
 """ 
 -0.5~+0.5なる混合行列を作成
 size: 正方行列のサイズ
