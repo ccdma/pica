@@ -241,7 +241,7 @@ def weyl_samples(low_k: float, delta_k: float, length: int) -> np.ndarray:
 複素数系列を生成
 https://www.jstage.jst.go.jp/article/japannctam/55/0/55_0_81/_pdf/-char/ja
 n: 何倍角の系列か
-rad_0: 初期値（自然数mを用いて、np.exp(np.pi/n^m*1j)などと指定すると数値的に不安定）
+rad_0: 初期偏角（自然数mを用いて、np.exp(np.pi/n^m*1j)などと指定すると数値的に不安定）
 return: exp[rad_0*n^j] j=0,1,2...
 """
 def const_powerd_samples(n: int, rad_0: float, length: int) -> np.ndarray:
