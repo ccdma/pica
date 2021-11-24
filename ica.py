@@ -253,6 +253,19 @@ def const_powerd_samples(n: int, rad_0: float, length: int) -> np.ndarray:
 		result.append(a_0)
 	return np.array(result, dtype=complex)
 
+"""
+原子根符号
+int型でmodをとって計算するのでexactに計算可能
+const_powerd_samplesだと誤差が出る？
+"""
+def primitive_root_code(p: int, q: int) -> np.ndarray:
+	result = []
+	prev = 1
+	for i in range(p):
+		result.append(np.exp(-1j*2*np.pi*prev/p))
+		prev = (prev * q)%p
+	return np.array(result)
+
 """ 
 -0.5~+0.5なる混合行列を作成
 size: 正方行列のサイズ
