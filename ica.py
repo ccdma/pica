@@ -1,3 +1,4 @@
+from os import error
 import numpy.linalg as la
 import numpy as np
 from scipy.special import eval_chebyt, eval_chebyu
@@ -259,6 +260,8 @@ int型でmodをとって計算するのでexactに計算可能
 const_powerd_samplesだと誤差が出る？
 """
 def primitive_root_code(p: int, q: int) -> np.ndarray:
+	if not is_primitive_root(p, q):
+		raise Exception(f"(p={p},q={q}) is not primitive root.")
 	result = []
 	prev = 1
 	for i in range(p):
