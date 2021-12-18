@@ -1,3 +1,4 @@
+from os import error
 import numpy.linalg as la
 import numpy as np
 from scipy.special import eval_chebyt, eval_chebyu
@@ -241,7 +242,8 @@ def weyl_samples(low_k: float, delta_k: float, length: int) -> np.ndarray:
 複素数系列を生成
 https://www.jstage.jst.go.jp/article/japannctam/55/0/55_0_81/_pdf/-char/ja
 n: 何倍角の系列か
-a_0: 初期値（自然数mを用いて、np.exp(np.pi/n^m*1j)などと指定すると数値的に不安定）
+rad_0: 初期偏角（自然数mを用いて、np.exp(np.pi/n^m*1j)などと指定すると数値的に不安定）
+return: exp[rad_0*n^j] j=0,1,2...
 """
 def const_powerd_samples(n: int, rad_0: float, length: int) -> np.ndarray:
 	result = []
@@ -251,6 +253,49 @@ def const_powerd_samples(n: int, rad_0: float, length: int) -> np.ndarray:
 		a_0 = complex(eval_chebyt(n, a_0.real), eval_chebyu(n-1, a_0.real)*a_0.imag)
 		result.append(a_0)
 	return np.array(result, dtype=complex)
+
+"""
+原子根符号
+int型でmodをとって計算するのでexactに計算可能
+const_powerd_samplesだと誤差が出る？
+"""
+def primitive_root_code(p: int, q: int) -> np.ndarray:
+	if not is_primitive_root(p, q):
+		raise Exception(f"(p={p},q={q}) is not primitive root.")
+	result = []
+	prev = 1
+	for i in range(p):
+		result.append(np.exp(-1j*2*np.pi*prev/p))
+		prev = (prev * q)%p
+	return np.array(result)
+
+"""
+素数判定
+"""
+def is_prime(n):
+    n = abs(n)
+    if n == 2: return True
+    if n < 2 or n&1 == 0: return False
+    return pow(2, n-1, n) == 1
+
+"""
+原子根かどうかを判定する
+"""
+def is_primitive_root(p: int, q: int) -> np.array:
+	if q >= p:
+		return False
+	if p <= 1:
+		return False
+	if p == 2:
+		return True
+	if not is_prime(p):
+		return False
+	prev = 1
+	for i in range(1, p-1):
+		prev = (prev*q)%p
+		if prev == 1:
+			return False
+	return True
 
 """ 
 -0.5~+0.5なる混合行列を作成

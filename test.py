@@ -1,10 +1,10 @@
 from ica import *
 
-SAMPLINGS = 10000
-SIGNALS = 4
+for i in range(1020, 1030):
+	if is_prime(i):
+		print(i)
 
-for i in range(10):
-	S = np.array([chebyt_samples(j+2, 0.1, SAMPLINGS) for j in range(SIGNALS)])
-	X = random_matrix(SIGNALS) @ S
-	Y = FastICA(X, _assert=False)
-
+p = 1021
+for i in range(p):
+	if is_primitive_root(p, i+1):
+		print(i+1)
