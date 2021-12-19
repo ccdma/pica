@@ -10,8 +10,8 @@ def odd_or_even(i: int):
     else:
         return -1
 
-signals = 10
-samplings = 2000
+signals = 5
+samplings = 1000
 
 S = np.array([ const_powerd_samples(2, np.pi/(np.sqrt(2)+i), samplings) for i in range(signals)])
 
@@ -24,7 +24,7 @@ T = S * B
 A = random_matrix(signals)
 # print(la.det(A))
 
-X = A @ T + np.random.normal(0.0, 0, (signals, samplings))
+X = A @ T + np.random.normal(0.0, 0.1, (signals, samplings))
 
 rr = FastICA(X.real, _assert=False)
 ri = FastICA(X.imag, _assert=False)
