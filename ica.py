@@ -384,7 +384,5 @@ def estimate_basearg(cdata: np.ndarray, deg: int) -> float:
 	case = {}
 	for base_rad in np.linspace(0, 2*np.pi, 100):
 		case[base_rad] = eval_cdata_baseline(fix_rotate(cdata, base_rad), deg)
-	pprint(case)
 	min_k = min(case, key=case.get)
-	print(min_k)
 	return min_k
