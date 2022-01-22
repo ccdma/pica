@@ -1,4 +1,5 @@
 from os import error
+from pprint import pprint
 import numpy.linalg as la
 import numpy as np
 from scipy.special import eval_chebyt, eval_chebyu
@@ -363,15 +364,27 @@ rotate_times: 定常的な角度のズレ（何サンプリングで一周する
 def fix_rotate(cdata: np.ndarray, base_rad: float=0, rotate_times: int=1) -> np.ndarray:
 	cdatalen = cdata.shape[0]
 	rotate_sign = np.sign(rotate_times)
+	rotate_times_abs = np.abs(rotate_times)
 	cdata = np.exp(np.full(cdata.shape, base_rad)*1j) * cdata
-	cdata = np.tile(np.exp(np.linspace(0, 2*np.pi, rotate_times)*rotate_sign*1j), cdatalen//rotate_times+1)[:cdatalen] * cdata
+	cdata = np.tile(np.exp(np.linspace(0, 2*np.pi, rotate_times_abs)*rotate_sign*1j), cdatalen//rotate_times_abs+1)[:cdatalen] * cdata
 	return cdata
 
 def mse(A: np.ndarray, B: np.ndarray) -> float:
 	return ((A - B)**2).mean()
 
-def estimate_std(cdata: np.ndarray, deg: int):
+"""
+cdataが水平で回転している度合いを計算します
+"""
+def eval_cdata_baseline(cdata: np.ndarray, deg: int) -> float:
 	acdata = np.angle(cdata)
 	diff = mse(np.remainder(acdata[:-1] * deg, 2*np.pi), np.remainder(acdata[1:], 2*np.pi))
 	return diff
-	
+
+def estimate_basearg(cdata: np.ndarray, deg: int) -> float:
+	case = {}
+	for base_rad in np.linspace(0, 2*np.pi, 100):
+		case[base_rad] = eval_cdata_baseline(fix_rotate(cdata, base_rad), deg)
+	pprint(case)
+	min_k = min(case, key=case.get)
+	print(min_k)
+	return min_k
