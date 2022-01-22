@@ -2,7 +2,7 @@ from os import error
 import numpy.linalg as la
 import numpy as np
 from scipy.special import eval_chebyt, eval_chebyu
-import dataclasses
+import dataclasses, math
 
 @dataclasses.dataclass
 class FastICAResult:
@@ -366,3 +366,12 @@ def fix_rotate(cdata: np.ndarray, base_rad: float=0, rotate_times: int=1) -> np.
 	cdata = np.exp(np.full(cdata.shape, base_rad)*1j) * cdata
 	cdata = np.tile(np.exp(np.linspace(0, 2*np.pi, rotate_times)*rotate_sign*1j), cdatalen//rotate_times+1)[:cdatalen] * cdata
 	return cdata
+
+def mse(A: np.ndarray, B: np.ndarray) -> float:
+	return ((A - B)**2).mean()
+
+def estimate_std(cdata: np.ndarray, deg: int):
+	acdata = np.angle(cdata)
+	diff = mse(np.remainder(acdata[:-1] * deg, 2*np.pi), np.remainder(acdata[1:], 2*np.pi))
+	return diff
+	
