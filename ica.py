@@ -354,3 +354,15 @@ https://www.jstage.jst.go.jp/article/transcom/advpub/0/advpub_2017EBP3139/_artic
 def odd_periodic_correlation(P: np.ndarray, l: int):
 	N = int(P.shape[1]/2)
 	return _matrix_c(P, l) - _matrix_c(P, l-N)
+
+"""
+cdata: 複素系列
+base_rad: 定数偏角
+rotate_times: 定常的な角度のズレ（何サンプリングで一周するか）、マイナスにすると逆周り
+"""
+def fix_rotate(cdata: np.ndarray, base_rad: float=0, rotate_times: int=1) -> np.ndarray:
+	cdatalen = cdata.shape[0]
+	rotate_sign = np.sign(rotate_times)
+	cdata = np.exp(np.full(cdata.shape, base_rad)*1j) * cdata
+	cdata = np.tile(np.exp(np.linspace(0, 2*np.pi, rotate_times)*rotate_sign*1j), cdatalen//rotate_times+1)[:cdatalen] * cdata
+	return cdata
