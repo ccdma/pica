@@ -2,7 +2,7 @@ from os import error
 from pprint import pprint
 import numpy.linalg as la
 import numpy as np
-from scipy.special import eval_chebyt, eval_chebyu
+from scipy.special import eval_chebyt, eval_chebyu, erfc
 import dataclasses, math
 
 @dataclasses.dataclass
@@ -386,3 +386,12 @@ def estimate_basearg(cdata: np.ndarray, deg: int) -> float:
 		case[base_rad] = eval_cdata_baseline(fix_rotate(cdata, base_rad), deg)
 	min_k = min(case, key=case.get)
 	return min_k
+
+"""
+N: code of length (array_like)
+K: number of users (array_like)
+"""
+def cdma_ber(N, K):
+	sir = N/(K-1)
+	q = lambda z: 1/2 * erfc(z/np.sqrt(2))
+	return q(np.sqrt(sir))
