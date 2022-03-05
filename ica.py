@@ -389,9 +389,8 @@ def estimate_basearg(cdata: np.ndarray, deg: int) -> float:
 
 """
 N: code of length (array_like)
+sigma: noise size
 K: number of users (array_like)
 """
-def cdma_ber(N, K):
-	sir = N/(K-1)
-	q = lambda z: 1/2 * erfc(z/np.sqrt(2))
-	return q(np.sqrt(sir))
+def cdma_ber(N, sigma, K: np.array):
+    return 1/2 * erfc(N/np.sqrt(2*((K-1)*N + sigma**2)))
