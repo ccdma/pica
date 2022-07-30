@@ -1,4 +1,7 @@
-from ica import *
+"""
+チェビシェフ多項式の直行性をグラフで確認
+"""
+from lib.ica import *
 import matplotlib.pyplot as plt
 import numpy as np
 

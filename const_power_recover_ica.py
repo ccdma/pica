@@ -1,6 +1,9 @@
+"""
+ICAを用いてパワー一定カオス拡散符号の復元を行う
+"""
 import matplotlib.pyplot as plt
 import numpy as np
-from ica import *
+from lib.ica import *
 
 np.random.seed(1)
 

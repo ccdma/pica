@@ -1,6 +1,9 @@
+"""
+複素信号においてシンボリックダイナミクスで挙動を確認
+"""
 import matplotlib.pyplot as plt
 import numpy as np
-from ica import *
+from lib.ica import *
 
 np.random.seed(1)
 

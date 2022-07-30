@@ -1,5 +1,8 @@
+"""
+実数信号においてシンボリックダイナミクスで挙動を確認
+"""
 from numpy import random
-from ica import *
+from lib.ica import *
 import matplotlib.pyplot as plt
 import numpy as np
 

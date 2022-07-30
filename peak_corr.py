@@ -1,4 +1,4 @@
-from ica import *
+from lib.ica import *
 import matplotlib.pyplot as plt
 
 np.random.seed(0)
