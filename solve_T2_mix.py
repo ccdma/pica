@@ -37,8 +37,8 @@ vars = [
 ]
 print(x_val)
 print(y_val)
-print(solved[1][0].subs(vars))
-print(solved[1][1].subs(vars))
+print(solved[0][0].subs(vars))
+print(solved[0][1].subs(vars))
 
 
 # print(sp.latex(solved))
