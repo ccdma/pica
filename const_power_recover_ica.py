@@ -54,16 +54,17 @@ for i in range(SIGNALS):
 	ax[2].scatter(y.real, y.imag, alpha=0.5, s=r_size)
 	ax[2].plot(y.real, y.imag, lw=lw)
 
-ax[0].set_title("source")
-ax[1].set_title("mixed")
-ax[2].set_title("reconstruct")
+ax[0].set_title("source", fontsize=16)
+ax[1].set_title("mixed", fontsize=16)
+ax[2].set_title("reconstruct", fontsize=16)
 for a in ax:
-	a.set_xlabel("real")
-	a.set_ylabel("image")
+	a.set_xlabel("real", fontsize=14)
+	a.set_ylabel("image", fontsize=14)
+	a.tick_params(labelsize=10)
 
 # fig.tight_layout()
 # fig.suptitle("", x=0.1, y=0.97)
 fig.set_figheight(5)
-fig.set_figwidth(16)
+fig.set_figwidth(17)
 
 plt.show()
