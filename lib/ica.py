@@ -260,13 +260,13 @@ def const_powerd_samples(n: int, rad_0: float, length: int) -> np.ndarray:
 int型でmodをとって計算するのでexactに計算可能
 const_powerd_samplesだと誤差が出る？
 """
-def primitive_root_code(p: int, q: int) -> np.ndarray:
+def primitive_root_code(p: int, q: int, k:int) -> np.ndarray:
 	if not is_primitive_root(p, q):
 		raise Exception(f"(p={p},q={q}) is not primitive root.")
 	result = []
 	prev = 1
 	for i in range(p):
-		result.append(np.exp(-1j*2*np.pi*prev/p))
+		result.append(np.exp(-1j*2*np.pi*prev/p*k))
 		prev = (prev * q)%p
 	return np.array(result)
 
