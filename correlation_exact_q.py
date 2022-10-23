@@ -18,7 +18,7 @@ cor = []
 
 for q in q_list[1:]:
 	X1 = primitive_root_code(p, 2)
-	X2 = primitive_root_code(p, q)
+	X2 = primitive_root_code(p, q, q)
 
 	X1_1 = np.append(1, X1)
 	X2_1 = np.append(1, X2)
