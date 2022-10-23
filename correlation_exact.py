@@ -17,7 +17,7 @@ for i in range(p-2):
 	X2_1 = np.append(1, X2)
 	cor.append(np.vdot(X1_1, X2_1))
 
-plt.scatter(np.array(cor).real/p, np.array(cor).imag/p)
+plt.plot(np.abs(np.array(cor)/p))
 plt.show()
 
 
