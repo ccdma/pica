@@ -18,6 +18,9 @@ for i in range(p-2):
 	exact_correlation.append(np.vdot(X1_1, X2_1))
 
 plt.plot(np.abs(np.array(exact_correlation)/p))
+plt.title("correlation of X(k1=1) and X(k2)")
+plt.xlabel("k2")
+plt.ylabel("correlation")
 plt.show()
 
 
