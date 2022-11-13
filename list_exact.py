@@ -10,6 +10,6 @@ result = []
 for q in q_range:
 	for p in p_range:
 		if is_primitive_root(p, q):
-			result.append(q)
+			result.append((p, q))
 
 print(result)
