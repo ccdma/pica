@@ -4,7 +4,7 @@ p_start = 2
 p_range = range(p_start, p_start+100)
 
 q_start = 2
-q_range = range(q_start, q_start+100)
+q_range = range(q_start, q_start+1)
 
 result = []
 for q in q_range:
