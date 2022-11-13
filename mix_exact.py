@@ -32,5 +32,10 @@ plt.xlabel("k2")
 plt.ylabel("correlation")
 plt.tight_layout()
 plt.show()
-pass
+
+# plt.scatter(code_1.real, code_1.imag, s=1)
+# plt.plot(code_1.real, code_1.imag, lw=0.2)
+# plt.title(f"IQ plot of (p, q)=({p_a},{q_a}),({p_b},{q_b})")
+# plt.gca().set_aspect('equal','datalim')
+# plt.show()
 
