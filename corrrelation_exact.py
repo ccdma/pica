@@ -8,7 +8,7 @@ q = 2
 print((p-1)/2)
 print(is_prime(int((p-1)/2)))
 X1 = primitive_root_code(p, q, 1)
-X2 = primitive_root_code(p, q, 2)
+X2 = primitive_root_code(p, 7, 1)
 
 X1_1 = np.append(1, X1)
 X2_1 = np.append(1, X2)
