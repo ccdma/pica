@@ -4,11 +4,11 @@ ICAを用いたシュミレーション
 import matplotlib.pyplot as plt
 import numpy as np
 import lb
-import dataclasses, sys, warnings, multiprocessing
+import dataclasses, sys, warnings, multiprocessing, time
 import dataclass_csv
 import concurrent.futures as futu
 
-np.random.seed(1)
+np.random.seed(0)
 
 @dataclasses.dataclass
 class EachReport:
@@ -22,12 +22,15 @@ class SummaryReport:
 	ber: float
 	snr: float
 	complete: int
+	time: float
 
 """
 K: number of Users
 N: code length
 """
-def ica(K: int, N: int, snr: float):
+def ica(K: int, N: int, snr: float, seed: int):
+	np.random.seed(seed)
+
 	B = lb.random_bits([K, N])
 
 	# S = np.array([lb.mixed_primitive_root_code([(5, 2), (13, 2)], k) for k in range(1, K+1)])
@@ -56,15 +59,18 @@ def ica(K: int, N: int, snr: float):
 	return EachReport(ber=ber, snr=lb.snr(MIXED, AWGN))
 
 def main():
+	delimiter="\t"
+	dataclass_csv.DataclassWriter(sys.stdout, [], SummaryReport, delimiter=delimiter).write()
+
 	N = 1019
 	expected_snr = 10
-	dataclass_csv.DataclassWriter(sys.stdout, [], SummaryReport).write()
 	for K in range(2, N):
 		ber_sum = 0
 		snr_sum = 0
 		complete = 0
+		start_time = time.perf_counter()
 		with futu.ProcessPoolExecutor(max_workers=multiprocessing.cpu_count()-1) as executor:
-			futures = [executor.submit(ica, K, N, expected_snr) for trial in range(1000)]
+			futures = [executor.submit(ica, K, N, expected_snr, trial) for trial in range(1000)]
 			for future in futu.as_completed(futures):
 				try:
 					report = future.result()
@@ -78,8 +84,9 @@ def main():
 			N=N,
 			ber=ber_sum/complete,
 			snr=snr_sum/complete,
-			complete=complete
-		)], SummaryReport).write(skip_header=True)
+			complete=complete,
+			time=time.perf_counter()-start_time
+		)], SummaryReport, delimiter=delimiter).write(skip_header=True)
 
 if __name__ == '__main__':
 	with warnings.catch_warnings():

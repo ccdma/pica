@@ -4,7 +4,7 @@ CDMAのシュミレーション
 import lb
 import numpy as np
 import matplotlib.pyplot as plt
-import dataclasses, sys, warnings, multiprocessing
+import dataclasses, sys, warnings, multiprocessing, time
 import dataclass_csv
 import concurrent.futures as futu
 
@@ -22,12 +22,15 @@ class SummaryReport:
 	ber: float
 	snr: float
 	complete: int
+	time: float
 
 """
 K: number of users
 N: code length
 """
-def cdma(K: int, N: int, snr: float) -> EachReport:
+def cdma(K: int, N: int, snr: float, seed: int) -> EachReport:
+	np.random.seed(seed)
+
 	bits = lb.random_bits([1, K])
 	bpsk_data = np.complex64(bits)
 	
@@ -59,8 +62,9 @@ def main():
 		ber_sum = 0
 		snr_sum = 0
 		complete = 0
+		start_time = time.perf_counter()
 		with futu.ProcessPoolExecutor(max_workers=multiprocessing.cpu_count()-1) as executor:
-			futures = [executor.submit(cdma, K, N, expected_snr) for trial in range(10000)]
+			futures = [executor.submit(cdma, K, N, expected_snr, trial) for trial in range(10000)]
 			for future in futu.as_completed(futures):
 				try:
 					report = future.result()
@@ -74,7 +78,8 @@ def main():
 			N=N,
 			ber=ber_sum/complete,
 			snr=snr_sum/complete,
-			complete=complete
+			complete=complete,
+			time=time.perf_counter()-start_time
 		)], SummaryReport).write(skip_header=True)
 
 if __name__ == '__main__':
