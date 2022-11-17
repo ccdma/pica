@@ -5,7 +5,6 @@ import numba
 
 np.random.seed(0)
 
-# @numba.njit
 def cdma():
     K = 56 # number of users
     N = 61 # code length
@@ -18,7 +17,7 @@ def cdma():
     
     T = B * S
     A = np.ones(K)
-    AWGN = np.random.normal(0, stddev, N)
+    AWGN = np.random.normal(0, stddev, N) + 1j*np.random.normal(0, stddev, N)
 
     X = T.T @ A + AWGN
 
@@ -31,4 +30,5 @@ def cdma():
 
     pass
 
-cdma()
+for _ in range(10000):
+    cdma()

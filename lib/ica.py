@@ -1,7 +1,7 @@
 import numpy.linalg as la
 import numpy as np
 from scipy.special import eval_chebyt, eval_chebyu, erfc
-import dataclasses
+import dataclasses, numba
 
 @dataclasses.dataclass
 class FastICAResult:
@@ -247,9 +247,8 @@ def const_powerd_samples(n: int, rad_0: float, length: int) -> np.ndarray:
 int型でmodをとって計算するのでexactに計算可能
 const_powerd_samplesだと誤差が出る？
 """
+@numba.njit("c16[:](i8, i8, i8, b1)")
 def primitive_root_code(p: int, q: int, k: int=1, add_1: bool = False) -> np.ndarray:
-	if not is_primitive_root(p, q):
-		raise Exception(f"(p={p},q={q}) is not primitive root.")
 	result = []
 	if add_1:
 		result.append(1.0)
@@ -257,7 +256,7 @@ def primitive_root_code(p: int, q: int, k: int=1, add_1: bool = False) -> np.nda
 	for i in range(p-1):
 		result.append(np.exp(-1j*2*np.pi*prev/p))
 		prev = (prev * q)%p
-	return np.array(result)
+	return np.complex128(result)
 
 """
 素数判定
@@ -271,7 +270,7 @@ def is_prime(n):
 """
 原子根かどうかを判定する
 """
-def is_primitive_root(p: int, q: int) -> np.array:
+def is_primitive_root(p: int, q: int) -> bool:
 	if q >= p:
 		return False
 	if p <= 1:
