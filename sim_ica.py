@@ -8,6 +8,8 @@ import dataclasses, sys, warnings, multiprocessing, time
 import dataclass_csv
 import concurrent.futures as futu
 
+DELIMITER="\t"
+
 np.random.seed(0)
 
 @dataclasses.dataclass
@@ -83,8 +85,7 @@ def ica(K: int, N: int, snr: float, seed: int):
 	return EachReport(ber=ber, snr=lb.snr(MIXED, AWGN))
 
 def main():
-	delimiter="\t"
-	dataclass_csv.DataclassWriter(sys.stdout, [], SummaryReport, delimiter=delimiter).write()
+	dataclass_csv.DataclassWriter(sys.stdout, [], SummaryReport, delimiter=DELIMITER).write()
 
 	N = 1019
 	expected_snr = 10
@@ -98,7 +99,7 @@ def main():
 					accumlator.add(report)
 				except Warning as e:
 					pass
-		dataclass_csv.DataclassWriter(sys.stdout, [accumlator.summary()], SummaryReport, delimiter=delimiter).write(skip_header=True)
+		dataclass_csv.DataclassWriter(sys.stdout, [accumlator.summary()], SummaryReport, delimiter=DELIMITER).write(skip_header=True)
 
 if __name__ == '__main__':
 	with warnings.catch_warnings():

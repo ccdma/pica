@@ -8,6 +8,8 @@ import dataclasses, sys, warnings, multiprocessing, time
 import dataclass_csv
 import concurrent.futures as futu
 
+DELIMITER="\t"
+
 np.random.seed(0)
 
 @dataclasses.dataclass
@@ -78,23 +80,24 @@ def cdma(K: int, N: int, snr: float, seed: int) -> EachReport:
 
 	return EachReport(ber=ber, snr=lb.snr(MIXED, AWGN))
 
+def do_trial(K: int, N: int):
+	expected_snr = 5
+	accumlator = ReportAccumulator(K, N)
+	for trial in range(10000):
+		try:
+			report = cdma(K, N, expected_snr, trial)
+			accumlator.add(report)
+		except Warning as e:
+			pass
+	dataclass_csv.DataclassWriter(sys.stdout, [accumlator.summary()], SummaryReport, delimiter=DELIMITER).write(skip_header=True)
+
 def main():
-	delimiter="\t"
-	dataclass_csv.DataclassWriter(sys.stdout, [], SummaryReport, delimiter=delimiter).write()
+	dataclass_csv.DataclassWriter(sys.stdout, [], SummaryReport, delimiter=DELIMITER).write()
 
 	N = 65
-	expected_snr = 5
-	for K in range(2, N):
-		accumlator = ReportAccumulator(K, N)
-		with futu.ProcessPoolExecutor(max_workers=multiprocessing.cpu_count()-1) as executor:
-			futures = [executor.submit(cdma, K, N, expected_snr, trial) for trial in range(10000)]
-			for future in futu.as_completed(futures):
-				try:
-					report = future.result()
-					accumlator.add(report)
-				except Warning as e:
-					pass
-		dataclass_csv.DataclassWriter(sys.stdout, [accumlator.summary()], SummaryReport, delimiter=delimiter).write(skip_header=True)
+	with futu.ProcessPoolExecutor(max_workers=multiprocessing.cpu_count()-1) as executor:
+		futures = [executor.submit(do_trial, K, N) for K in range(2, N)]
+		futu.wait(futures)
 
 if __name__ == '__main__':
 	with warnings.catch_warnings():
