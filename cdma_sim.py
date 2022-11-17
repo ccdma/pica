@@ -31,8 +31,8 @@ def lcm(a: int, b: int):
 
 def mixed_primitive_root_code(p_a, q_a, p_b, q_b, k=1):
     lcm_ab = lcm(p_a, p_b)
-    code_a = np.tile(lb.primitive_root_code(p_a, q_a, k, True), lcm_ab//p_a)
-    code_b = np.tile(lb.primitive_root_code(p_b, q_b, k, True), lcm_ab//p_b)
+    code_a = np.tile(lb.primitive_root_code(p_a, q_a, k), lcm_ab//p_a)
+    code_b = np.tile(lb.primitive_root_code(p_b, q_b, k), lcm_ab//p_b)
     return code_a * code_b
 
 """

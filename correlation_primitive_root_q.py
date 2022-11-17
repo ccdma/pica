@@ -21,11 +21,9 @@ for _q in q_range:
 cor = []
 
 for q in q_list[1:]:
-	X1 = lb.primitive_root_code(p, 2)
-	X2 = lb.primitive_root_code(p, q, q)
+	X1_1 = lb.primitive_root_code(p, 2)
+	X2_1 = lb.primitive_root_code(p, q, q)
 
-	X1_1 = np.append(1, X1)
-	X2_1 = np.append(1, X2)
 	cor.append(np.vdot(X1_1, X2_1))
 
 plt.plot(np.abs(np.array(cor)/p))

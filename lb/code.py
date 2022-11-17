@@ -46,11 +46,9 @@ def chebyt_code(n: int, a0: float, length: int) -> np.ndarray:
 int型でmodをとって計算するのでexactに計算可能
 const_powerd_samplesだと誤差が出る
 """
-@numba.njit("c16[:](i8,i8,i8,b1)")
-def primitive_root_code(p: int, q: int, k: int=1, add_1: bool = False) -> np.ndarray:
-	result = []
-	if add_1:
-		result.append(1.0)
+@numba.njit("c16[:](i8,i8,i8)")
+def primitive_root_code(p: int, q: int, k: int=1) -> np.ndarray:
+	result = [1.0]
 	prev = k
 	for i in range(p-1):
 		result.append(np.exp(-1j*2*np.pi*prev/p))
