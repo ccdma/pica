@@ -1,5 +1,5 @@
 """
-ICAを用いてパワー一定カオス拡散符号の復元を行う
+ICAを用いたシュミレーション
 """
 import matplotlib.pyplot as plt
 import numpy as np
