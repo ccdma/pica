@@ -20,13 +20,18 @@ class SummaryReport:
     snr: float
     complete: int
 
-@numba.njit("c16[:,:](i8,i8)")
-def make_code(N: int, K: int):
-    codes = np.empty((K, N), dtype=np.complex128)
-    for i in range(K):
-        # codes[i] = ica.primitive_root_code(N, 2, i+1, True)
-        codes[i] = ica.const_power_code(2, np.random.rand(), N)
-    return codes
+import math
+
+@numba.njit("i8(i8,i8)")
+def lcm(a: int, b: int):
+    return a * b // math.gcd(a, b)
+
+# @numba.njit("c16[:](i8,i8,i8,i8,i8)")
+def mixed_primitive_root_code(p_a, q_a, p_b, q_b, k=1):
+    lcm_ab = lcm(p_a, p_b)
+    code_a = np.tile(ica.primitive_root_code(p_a, q_a, k, True), lcm_ab//p_a)
+    code_b = np.tile(ica.primitive_root_code(p_b, q_b, k, True), lcm_ab//p_b)
+    return code_a * code_b
 
 """
 K: number of users
@@ -37,8 +42,10 @@ def cdma(K: int, N: int, snr: float) -> EachReport:
     bpsk_data = np.complex64(bits)
     
     B = np.repeat(bpsk_data, N, axis=0).T
-    S = make_code(N, K)
-    
+    S = np.array([mixed_primitive_root_code(5, 2, 13, 2, k) for k in range(1, K+1)])
+    # S = np.array([ica.primitive_root_code(N, 2, k, True) for k in range(1, K+1)])
+    # S = np.array([ica.const_power_code(2, np.random.rand(), N) for k in range(1, K+1)])
+
     T = B * S
     A = np.ones(K)
     MIXED = T.T @ A
@@ -54,10 +61,10 @@ def cdma(K: int, N: int, snr: float) -> EachReport:
 
     return EachReport(ber=ber, snr=ica.snr(MIXED, AWGN))
 
-N = 61
-expected_snr = 10
+N = 65
+expected_snr = 5
 dataclass_csv.DataclassWriter(sys.stdout, [], SummaryReport).write()
-for K in range(2, 61):
+for K in range(2, N):
     ber_sum = 0
     snr_sum = 0
     complete = 0
