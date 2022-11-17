@@ -9,34 +9,25 @@ import numpy as np
 import matplotlib.pyplot as plt
 import math
 
-def lcm(a: int, b: int):
-    return a * b // math.gcd(a, b)
+pq_list = [(13, 2), (19, 2)]
+code_len = math.lcm(*map(lambda pq: pq[0], pq_list))
 
-def make_code(p_a, q_a, p_b, q_b, k=1):
-    lcm_ab = lcm(p_a, p_b)
-    code_a = np.tile(lb.primitive_root_code(p_a, q_a, k), lcm_ab//p_a)
-    code_b = np.tile(lb.primitive_root_code(p_b, q_b, k), lcm_ab//p_b)
-    return code_a * code_b
+code_1 = lb.mixed_primitive_root_code(pq_list, 1)
 
-p_a, q_a = 13, 2
-p_b, q_b = 19, 2
-lcm_ab = lcm(p_a, p_b)
-
-code_1 = make_code(p_a, q_a, p_b, q_b, 1)
 corr_list = []
-for k in range(2, lcm_ab):
-    corr_list.append(np.vdot(make_code(p_a, q_a, p_b, q_b, k), code_1) / lcm_ab)
+for k in range(2, code_len):
+    corr_list.append(np.vdot(lb.mixed_primitive_root_code(pq_list, k), code_1) / code_len)
 
-plt.plot(np.abs(corr_list))
-plt.title(f"(p, q)=({p_a},{q_a}),({p_b},{q_b}): correlation of X(k1=1) and X(k2)")
-plt.xlabel("k2")
-plt.ylabel("correlation")
-plt.tight_layout()
-plt.show()
-
-# plt.scatter(code_1.real, code_1.imag, s=1)
-# plt.plot(code_1.real, code_1.imag, lw=0.2)
-# plt.title(f"IQ plot of (p, q)=({p_a},{q_a}),({p_b},{q_b})")
-# plt.gca().set_aspect('equal','datalim')
+# plt.plot(np.abs(corr_list))
+# plt.title(f"(p, q)={pq_list}: correlation of X(k1=1) and X(k2)")
+# plt.xlabel("k2")
+# plt.ylabel("correlation")
+# plt.tight_layout()
 # plt.show()
+
+plt.scatter(code_1.real, code_1.imag, s=1)
+plt.plot(code_1.real, code_1.imag, lw=0.2)
+plt.title(f"IQ plot of (p, q)={pq_list}")
+plt.gca().set_aspect('equal','datalim')
+plt.show()
 

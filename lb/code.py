@@ -1,5 +1,6 @@
 import numba
 import numpy as np
+import math
 from .misc import *
 
 """
@@ -55,3 +56,14 @@ def primitive_root_code(p: int, q: int, k: int=1) -> np.ndarray:
 		result.append(np.exp(-1j*2*np.pi*prev/p))
 		prev = (prev * q)%p
 	return np.complex128(result)
+
+"""
+原始根^n符号
+pq_list: (p,q)のリスト
+"""
+def mixed_primitive_root_code(pq_list: list[tuple[int, int]], k: int):
+	code_len = math.lcm(*map(lambda pq: pq[0], pq_list))
+	code = np.ones(code_len, dtype=np.complex128)
+	for p,q in pq_list:
+		code *= np.tile(primitive_root_code(p, q, k), code_len//p)
+	return code

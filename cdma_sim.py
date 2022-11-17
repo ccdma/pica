@@ -29,6 +29,7 @@ import math
 def lcm(a: int, b: int):
     return a * b // math.gcd(a, b)
 
+# @numba.njit("c16[:](i8,i8,i8,i8,i8)")
 def mixed_primitive_root_code(p_a, q_a, p_b, q_b, k=1):
     lcm_ab = lcm(p_a, p_b)
     code_a = np.tile(lb.primitive_root_code(p_a, q_a, k), lcm_ab//p_a)
@@ -44,9 +45,9 @@ def cdma(K: int, N: int, snr: float) -> EachReport:
     bpsk_data = np.complex64(bits)
     
     B = np.repeat(bpsk_data, N, axis=0).T
-    # S = np.array([mixed_primitive_root_code(5, 2, 13, 2, k) for k in range(1, K+1)])
+    S = np.array([mixed_primitive_root_code(3, 2, 5, 2, k) for k in range(1, K+1)])
     # S = np.array([ica.primitive_root_code(N, 2, k, True) for k in range(1, K+1)])
-    S = np.array([lb.const_power_code(2, np.random.rand(), N) for k in range(1, K+1)])
+    # S = np.array([lb.const_power_code(2, np.random.rand(), N) for k in range(1, K+1)])
 
     T = B * S
     A = np.ones(K)
