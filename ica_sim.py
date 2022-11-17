@@ -38,8 +38,8 @@ def ica(K: int, N: int, snr: float):
 	AWGN = lb.gauss_matrix_by_snr(MIXED, snr)
 	X = MIXED + AWGN
 
-	real_ica_result = lb.fast_ica(X.real)
-	imag_ica_result = lb.fast_ica(X.imag)
+	real_ica_result = lb.fast_ica_by_sklearn(X.real)
+	imag_ica_result = lb.fast_ica_by_sklearn(X.imag)
 
 	real_P = lb.estimate_circulant_matrix(A, real_ica_result.W)
 	imag_P = lb.estimate_circulant_matrix(A, imag_ica_result.W)
@@ -52,13 +52,13 @@ def ica(K: int, N: int, snr: float):
 	return EachReport(ber=ber, snr=lb.snr(MIXED, AWGN))
 
 N = 1019
-expected_snr = 50
+expected_snr = 30
 dataclass_csv.DataclassWriter(sys.stdout, [], SummaryReport).write()
 for K in range(2, N):
     ber_sum = 0
     snr_sum = 0
     complete = 0
-    for trial in range(10):
+    for trial in range(100):
         report = ica(K, N, expected_snr)
         ber_sum += report.ber
         snr_sum += report.snr

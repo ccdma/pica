@@ -1,5 +1,6 @@
 import numpy.linalg as la
 import numpy as np
+from sklearn.decomposition import FastICA
 import dataclasses
 
 @dataclasses.dataclass
@@ -10,6 +11,11 @@ class FastICAResult:
 	#   [[y_0(0), y_0(1), y_0(2)]
 	#    [y_1(0), y_1(1), y_1(2)]]
 	#   s.t. y_point(time)
+	#
+	#
+	# W:
+	# inv(W) @ Y = X
+	# を満たす 
 	Y: np.ndarray
 	X_whiten: np.ndarray
 	X_center: np.ndarray
@@ -78,6 +84,15 @@ def fast_ica(X: np.ndarray, _assert: bool=True) -> FastICAResult:
 
 	return FastICAResult(Y=Y, X_whiten=X_whiten, X_center=X_center, W=W)
 
+def fast_ica_by_sklearn(X: np.ndarray):
+	f = FastICA(whiten='arbitrary-variance')
+	transformed = f.fit_transform(X.T)
+	return FastICAResult(
+		Y=transformed.T,
+		X_whiten=None,
+		X_center=None,
+		W=f.components_
+	)
 
 """
 エルミート転置をする（随伴行列を求める）
