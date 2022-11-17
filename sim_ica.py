@@ -4,8 +4,9 @@ ICAを用いたシュミレーション
 import matplotlib.pyplot as plt
 import numpy as np
 import lb
-import dataclasses, sys, warnings
+import dataclasses, sys, warnings, multiprocessing
 import dataclass_csv
+import concurrent.futures as futu
 
 np.random.seed(1)
 
@@ -29,7 +30,10 @@ N: code length
 def ica(K: int, N: int, snr: float):
 	B = lb.random_bits([K, N])
 
-	S = np.array([lb.primitive_root_code(N, 2, k) for k in range(1, K+1)])
+	# S = np.array([lb.mixed_primitive_root_code([(5, 2), (13, 2)], k) for k in range(1, K+1)])
+	# S = np.array([lb.primitive_root_code(N, 2, k) for k in range(1, K+1)])
+	S = np.array([lb.const_power_code(2, np.random.rand(), N) for k in range(1, K+1)])
+	
 	T = B * S
 
 	A = lb.random_matrix(K)
@@ -51,27 +55,33 @@ def ica(K: int, N: int, snr: float):
 
 	return EachReport(ber=ber, snr=lb.snr(MIXED, AWGN))
 
-N = 1019
-expected_snr = 10
-dataclass_csv.DataclassWriter(sys.stdout, [], SummaryReport).write()
-for K in range(2, N):
-	ber_sum = 0
-	snr_sum = 0
-	complete = 0
-	for trial in range(1000):
-		with warnings.catch_warnings():
-			warnings.filterwarnings('error')
-			try:
-				report = ica(K, N, expected_snr)
-				ber_sum += report.ber
-				snr_sum += report.snr
-				complete += 1
-			except Warning as e:
-				pass
-	dataclass_csv.DataclassWriter(sys.stdout, [SummaryReport(
-		K=K,
-		N=N,
-		ber=ber_sum/complete,
-		snr=snr_sum/complete,
-		complete=complete
-	)], SummaryReport).write(skip_header=True)
+def main():
+	N = 1019
+	expected_snr = 10
+	dataclass_csv.DataclassWriter(sys.stdout, [], SummaryReport).write()
+	for K in range(2, N):
+		ber_sum = 0
+		snr_sum = 0
+		complete = 0
+		with futu.ProcessPoolExecutor(max_workers=multiprocessing.cpu_count()-1) as executor:
+			futures = [executor.submit(ica, K, N, expected_snr) for trial in range(1000)]
+			for future in futu.as_completed(futures):
+				try:
+					report = future.result()
+					ber_sum += report.ber
+					snr_sum += report.snr
+					complete += 1
+				except Warning as e:
+					pass
+		dataclass_csv.DataclassWriter(sys.stdout, [SummaryReport(
+			K=K,
+			N=N,
+			ber=ber_sum/complete,
+			snr=snr_sum/complete,
+			complete=complete
+		)], SummaryReport).write(skip_header=True)
+
+if __name__ == '__main__':
+	with warnings.catch_warnings():
+		warnings.filterwarnings('error')
+		main()
