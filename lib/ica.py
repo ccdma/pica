@@ -214,7 +214,6 @@ def weyl_samples(low_k: float, delta_k: float, length: int) -> np.ndarray:
 		result.append(np.exp(2 * np.pi * 1j * x))
 	return np.array(result)
 
-
 """
 複素数系列を生成
 https://www.jstage.jst.go.jp/article/japannctam/55/0/55_0_81/_pdf/-char/ja
