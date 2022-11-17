@@ -24,6 +24,30 @@ class SummaryReport:
 	complete: int
 	time: float
 
+@dataclasses.dataclass
+class ReportAccumulator:
+	K: int
+	N: int
+	ber_sum = 0
+	snr_sum = 0
+	complete = 0
+	start_time = time.perf_counter()
+
+	def add(self, report: EachReport):
+		self.ber_sum += report.ber
+		self.snr_sum += report.snr
+		self.complete += 1
+	
+	def summary(self):
+		return SummaryReport(
+			K=self.K,
+			N=self.N,
+			ber=self.ber_sum/self.complete,
+			snr=self.snr_sum/self.complete,
+			complete=self.complete,
+			time=time.perf_counter()-self.start_time
+		)
+
 """
 K: number of users
 N: code length
@@ -61,28 +85,16 @@ def main():
 	N = 65
 	expected_snr = 5
 	for K in range(2, N):
-		ber_sum = 0
-		snr_sum = 0
-		complete = 0
-		start_time = time.perf_counter()
+		accumlator = ReportAccumulator(K, N)
 		with futu.ProcessPoolExecutor(max_workers=multiprocessing.cpu_count()-1) as executor:
 			futures = [executor.submit(cdma, K, N, expected_snr, trial) for trial in range(10000)]
 			for future in futu.as_completed(futures):
 				try:
 					report = future.result()
-					ber_sum += report.ber
-					snr_sum += report.snr
-					complete += 1
+					accumlator.add(report)
 				except Warning as e:
 					pass
-		dataclass_csv.DataclassWriter(sys.stdout, [SummaryReport(
-			K=K,
-			N=N,
-			ber=ber_sum/complete,
-			snr=snr_sum/complete,
-			complete=complete,
-			time=time.perf_counter()-start_time
-		)], SummaryReport, delimiter=delimiter).write(skip_header=True)
+		dataclass_csv.DataclassWriter(sys.stdout, [accumlator.summary()], SummaryReport, delimiter=delimiter).write(skip_header=True)
 
 if __name__ == '__main__':
 	with warnings.catch_warnings():
