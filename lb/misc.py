@@ -76,3 +76,21 @@ def is_primitive_root(p: int, q: int) -> bool:
 		if prev == 1:
 			return False
 	return True
+
+"""
+各行に対してrollを行う（非同期CDMAで利用する想定）
+
+>>> A
+array([[0, 1, 2, 3, 4],
+       [5, 6, 7, 8, 9]])
+>>> r
+array([0, 2])
+>>> each_row_roll(A, r)
+array([[0, 1, 2, 3, 4],
+       [8, 9, 5, 6, 7]])
+"""
+def each_row_roll(A, r):
+    rows, column_indices = np.ogrid[:A.shape[0], :A.shape[1]]    
+    r[r < 0] += A.shape[1]
+    column_indices = column_indices - r[:,np.newaxis]
+    return A[rows, column_indices]
