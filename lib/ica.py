@@ -200,6 +200,11 @@ def BatchEASI(X: np.ndarray):
 	Y = np.array(YT).T
 	return EASIResult(Y=Y)
 
+def mean_power(code):
+	return np.mean(np.power(code.real, 2) + np.power(code.imag, 2))
+
+def snr(code, noise):
+	return 10 * np.log10(mean_power(code)/mean_power(noise))
 
 """
 ワイル系列を生成
@@ -239,6 +244,7 @@ length: 系列の長さ
 @numba.njit("f8[:](i8,f8,i8)")
 def chebyt_code(n: int, a0: float, length: int) -> np.ndarray:
 	return const_power_code(n, np.cos(a0), length).real.astype(np.float64)
+
 
 """
 原子根符号
