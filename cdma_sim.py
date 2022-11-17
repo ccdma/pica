@@ -30,5 +30,15 @@ def cdma():
 
     pass
 
-for _ in range(10000):
-    cdma()
+# for _ in range(100000):
+#     cdma()
+
+n = 6
+rad_0 = 1.3
+a_0 = np.cos(rad_0)
+a = ica.dconst_powerd_samples(n, rad_0, 10)
+b = ica.dchebyt_samples(n, a_0, 10)
+c = ica.chebyt_samples(n, a_0, 10)
+print(a.real)
+print(c)
+# print(np.max(np.abs(a-b)))

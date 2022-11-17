@@ -240,14 +240,40 @@ def const_powerd_samples(n: int, rad_0: float, length: int) -> np.ndarray:
 	for _ in range(length-1):
 		a_0 = complex(eval_chebyt(n, a_0.real), eval_chebyu(n-1, a_0.real)*a_0.imag)
 		result.append(a_0)
-	return np.array(result, dtype=complex)
+	return np.complex128(result)
+
+"""
+複素数系列を生成
+https://www.jstage.jst.go.jp/article/japannctam/55/0/55_0_81/_pdf/-char/ja
+n: 何倍角の系列か
+rad_0: 初期偏角(ラジアン)
+return: exp[rad_0*n^j] j=0,1,2...
+"""
+@numba.njit("c16[:](i8,f8,i8)")
+def dconst_powerd_samples(n: int, rad_0: float, length: int) -> np.ndarray:
+	result = []
+	prev = rad_0%(2*np.pi)
+	for i in range(length):
+		result.append(np.exp(1j*prev))
+		prev = (prev * n)%(2*np.pi)
+	return np.complex128(result)
+
+"""
+チェビシェフ系列を生成（第一種）
+deg: チェビシェフ多項式の次数
+a0: 初期値
+length: 系列の長さ
+"""
+@numba.njit("f8[:](i8,f8,i8)")
+def dchebyt_samples(n: int, a0: float, length: int) -> np.ndarray:
+	return dconst_powerd_samples(n, np.cos(a0), length).real.astype(np.float64)
 
 """
 原子根符号
 int型でmodをとって計算するのでexactに計算可能
 const_powerd_samplesだと誤差が出る？
 """
-@numba.njit("c16[:](i8, i8, i8, b1)")
+@numba.njit("c16[:](i8,i8,i8,b1)")
 def primitive_root_code(p: int, q: int, k: int=1, add_1: bool = False) -> np.ndarray:
 	result = []
 	if add_1:
