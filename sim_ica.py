@@ -59,7 +59,7 @@ def ica(K: int, N: int, snr: float, seed: int):
 
 	B = lb.random_bits([K, N])
 
-	# S = np.array([lb.mixed_primitive_root_code([(5, 2), (13, 2)], k) for k in range(1, K+1)])
+	# S = np.array([lb.mixed_primitive_root_code([(53, 2), (19, 2)], k) for k in range(1, K+1)])
 	# S = np.array([lb.primitive_root_code(N, 2, k) for k in range(1, K+1)])
 	S = np.array([lb.const_power_code(2, np.random.rand(), N) for k in range(1, K+1)])
 	
@@ -87,8 +87,8 @@ def ica(K: int, N: int, snr: float, seed: int):
 def main():
 	dataclass_csv.DataclassWriter(sys.stdout, [], SummaryReport, delimiter=DELIMITER).write()
 
-	N = 1019
-	expected_snr = 10
+	N = 1007
+	expected_snr = 30
 	for K in range(2, N):
 		accumlator = ReportAccumulator(K, N)
 		with futu.ProcessPoolExecutor(max_workers=multiprocessing.cpu_count()-1) as executor:
