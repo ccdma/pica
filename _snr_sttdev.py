@@ -1,5 +1,5 @@
 from numpy import sqrt
-from lib.ica import *
+from lb.ica import *
 import matplotlib.pyplot as plt
 
 SAMPLES = 10000

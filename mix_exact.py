@@ -4,7 +4,8 @@ k: N
 Ψn = q'^n / p'
 Xn = exp(-2j*π*θn*k)*exp(-2j*π*Ψn*k)
 """
-from lib.ica import *
+import lb
+import numpy as np
 import matplotlib.pyplot as plt
 import math
 
@@ -13,8 +14,8 @@ def lcm(a: int, b: int):
 
 def make_code(p_a, q_a, p_b, q_b, k=1):
     lcm_ab = lcm(p_a, p_b)
-    code_a = np.tile(np.append(1, primitive_root_code(p_a, q_a, k)), lcm_ab//p_a)
-    code_b = np.tile(np.append(1, primitive_root_code(p_b, q_b, k)), lcm_ab//p_b)
+    code_a = np.tile(np.append(1, lb.primitive_root_code(p_a, q_a, k)), lcm_ab//p_a)
+    code_b = np.tile(np.append(1, lb.primitive_root_code(p_b, q_b, k)), lcm_ab//p_b)
     return code_a * code_b
 
 p_a, q_a = 13, 2

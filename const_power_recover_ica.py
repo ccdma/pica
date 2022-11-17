@@ -3,14 +3,14 @@ ICAを用いてパワー一定カオス拡散符号の復元を行う
 """
 import matplotlib.pyplot as plt
 import numpy as np
-from lib.ica import *
+import lb
 
 np.random.seed(1)
 
 SIGNALS = 2
 SAMPLINGS = 300
 
-S = np.array([ const_power_code(2, np.pi/(np.sqrt(2)+i), SAMPLINGS) for i in range(SIGNALS)]) 
+S = np.array([ lb.const_power_code(2, np.pi/(np.sqrt(2)+i), SAMPLINGS) for i in range(SIGNALS)]) 
 
 # S = []
 # for s in SC:
@@ -21,17 +21,17 @@ S = np.array([ const_power_code(2, np.pi/(np.sqrt(2)+i), SAMPLINGS) for i in ran
 # mean = np.mean(S,axis=1)
 # S = S - np.array([np.full(SAMPLINGS, ave) for ave in mean ])
 
-A = random_matrix(SIGNALS)
+A = lb.random_matrix(SIGNALS)
 
 X = A @ S
 
-print(correlation(np.vstack([S.real, S.imag])))
+print(lb.correlation(np.vstack([S.real, S.imag])))
 
-r_res = FastICA(X.real, _assert=False)
-i_res = FastICA(X.imag, _assert=False)
+r_res = lb.fast_ica(X.real, _assert=False)
+i_res = lb.fast_ica(X.imag, _assert=False)
 
-r_P = simple_circulant_P(A, r_res.W)
-i_P = simple_circulant_P(A, i_res.W)
+r_P = lb.simple_circulant_P(A, r_res.W)
+i_P = lb.simple_circulant_P(A, i_res.W)
 
 Y = r_P.T @ r_res.Y + i_P.T @ i_res.Y * 1j
 

@@ -1,4 +1,7 @@
-import lib.ica as ica
+"""
+CDMAのシュミレーション
+"""
+import lb
 import numpy as np
 import matplotlib.pyplot as plt
 import numba
@@ -29,8 +32,8 @@ def lcm(a: int, b: int):
 # @numba.njit("c16[:](i8,i8,i8,i8,i8)")
 def mixed_primitive_root_code(p_a, q_a, p_b, q_b, k=1):
     lcm_ab = lcm(p_a, p_b)
-    code_a = np.tile(ica.primitive_root_code(p_a, q_a, k, True), lcm_ab//p_a)
-    code_b = np.tile(ica.primitive_root_code(p_b, q_b, k, True), lcm_ab//p_b)
+    code_a = np.tile(lb.primitive_root_code(p_a, q_a, k, True), lcm_ab//p_a)
+    code_b = np.tile(lb.primitive_root_code(p_b, q_b, k, True), lcm_ab//p_b)
     return code_a * code_b
 
 """
@@ -38,7 +41,7 @@ K: number of users
 N: code length
 """
 def cdma(K: int, N: int, snr: float) -> EachReport:
-    bits = ica.random_bits([1, K])
+    bits = lb.random_bits([1, K])
     bpsk_data = np.complex64(bits)
     
     B = np.repeat(bpsk_data, N, axis=0).T
