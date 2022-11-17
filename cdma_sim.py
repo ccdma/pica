@@ -2,18 +2,41 @@ import lib.ica as ica
 import numpy as np
 import matplotlib.pyplot as plt
 import numba
+import dataclasses, sys
+import dataclass_csv
 
 np.random.seed(0)
 
-def cdma():
-    K = 56 # number of users
-    N = 61 # code length
-    stddev = 0.1
+@dataclasses.dataclass
+class EachReport:
+    ber: int
+
+@dataclasses.dataclass
+class SummaryReport:
+    K: int
+    N: int
+    stddev: float
+    ber: int
+    complete: int
+
+@numba.njit("c16[:,:](i8,i8)")
+def make_code(N: int, K: int):
+    codes = np.empty((K, N), dtype=np.complex128)
+    for i in range(K):
+        # codes[i] = ica.primitive_root_code(N, 2, i+1, True)
+        codes[i] = ica.const_power_code(2, np.random.rand(), N)
+    return codes
+
+"""
+K: number of users
+N: code length
+"""
+def cdma(K: int, N: int, stddev: float) -> EachReport:
     bits = ica.random_bits([1, K])
     bpsk_data = np.complex64(bits)
     
     B = np.repeat(bpsk_data, N, axis=0).T
-    S = np.array([ica.primitive_root_code(N, 2, i+1, True) for i in range(K)])
+    S = make_code(N, K)
     
     T = B * S
     A = np.ones(K)
@@ -28,8 +51,22 @@ def cdma():
 
     ber = ica.bit_error_rate(bits, rbits)
 
-    pass
+    return EachReport(ber=ber)
 
-for _ in range(100000):
-    cdma()
-
+N = 61
+stddev = 0.1
+dataclass_csv.DataclassWriter(sys.stdout, [], SummaryReport).write()
+for K in range(2, 61):
+    ber_sum = 0
+    complete = 0
+    for trial in range(10000):
+        report = cdma(K, N, stddev)
+        ber_sum += report.ber
+        complete += 1
+    dataclass_csv.DataclassWriter(sys.stdout, [SummaryReport(
+        K=K,
+        N=N,
+        stddev=stddev,
+        ber=ber_sum/complete,
+        complete=complete
+    )], SummaryReport).write(skip_header=True)
