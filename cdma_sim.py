@@ -42,9 +42,8 @@ def cdma(K: int, N: int, stddev: float) -> EachReport:
     
     T = B * S
     A = np.ones(K)
-    AWGN = np.random.normal(0, stddev, N) + 1j*np.random.normal(0, stddev, N)
-
     MIXED = T.T @ A
+    AWGN = ica.gauss_matrix_by_snr(MIXED, 20, [N])
     X = MIXED + AWGN
 
     RB = np.repeat(X[None], K, axis=0)*np.conjugate(S)

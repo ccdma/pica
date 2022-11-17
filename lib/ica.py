@@ -200,11 +200,30 @@ def BatchEASI(X: np.ndarray):
 	Y = np.array(YT).T
 	return EASIResult(Y=Y)
 
-def mean_power(code):
-	return np.mean(np.power(code.real, 2) + np.power(code.imag, 2))
+"""
+複素信号に対して平均電力のlog10を算出
+"""
+def log_mean_power(code):
+	mean_power = np.mean(np.power(code.real, 2) + np.power(code.imag, 2))
+	return np.log10(mean_power)
 
+"""
+SN比を計算
+"""
 def snr(code, noise):
-	return 10 * np.log10(mean_power(code)/mean_power(noise))
+	return 10 * (log_mean_power(code) - log_mean_power(noise))
+
+"""
+SNRを指定してガウスノイズ行列を生成
+
+code: 混合後の信号
+shape: ノイズ行列の形
+"""
+def gauss_matrix_by_snr(code, snr: float, shape):
+	noise_log_mean_power = log_mean_power(code) - snr/10
+	noise_mean_power = 10**noise_log_mean_power
+	stddev = np.sqrt(noise_mean_power/2)
+	return np.random.normal(0, stddev, shape) + 1j*np.random.normal(0, stddev, shape)
 
 """
 ワイル系列を生成
