@@ -53,8 +53,9 @@ class ReportAccumulator:
 """
 K: number of users
 N: code length
+sync: Trueならビット同期
 """
-def cdma(K: int, N: int, snr: float, seed: int) -> EachReport:
+def cdma(K: int, N: int, snr: float, sync: bool, seed: int) -> EachReport:
 	np.random.seed(seed)
 
 	bits = lb.random_bits([1, K])
@@ -65,7 +66,9 @@ def cdma(K: int, N: int, snr: float, seed: int) -> EachReport:
 	# S = np.array([lb.primitive_root_code(N, 2, k) for k in range(1, K+1)])
 	S = np.array([lb.const_power_code(2, np.random.rand(), N) for k in range(1, K+1)])
 
+	if not sync: S = lb.each_row_roll(S, np.random.randint(0, N, K))
 	T = B * S
+
 	A = np.ones(K)
 	MIXED = T.T @ A
 	AWGN = lb.gauss_matrix_by_snr(MIXED, snr)
@@ -85,7 +88,7 @@ def do_trial(K: int, N: int):
 	accumlator = ReportAccumulator(K, N)
 	for trial in range(100000):
 		try:
-			report = cdma(K, N, expected_snr, trial)
+			report = cdma(K, N, expected_snr, True, trial)
 			accumlator.add(report)
 		except Warning as e:
 			pass
@@ -94,7 +97,7 @@ def do_trial(K: int, N: int):
 def main():
 	dataclass_csv.DataclassWriter(sys.stdout, [], SummaryReport, delimiter=DELIMITER).write()
 
-	N = 65
+	N = 5
 	with futu.ProcessPoolExecutor(max_workers=multiprocessing.cpu_count()-1) as executor:
 		futures = [executor.submit(do_trial, K, N) for K in range(2, N)]
 		for future in futu.as_completed(futures):
