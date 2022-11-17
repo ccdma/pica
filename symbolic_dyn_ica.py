@@ -35,7 +35,7 @@ SAMPLINGS = 1000
 def test(signals: int, samplings: int, norm_scale: float):
 
     B = np.array([[ odd_or_even(np.random.randint(0, 10)) for i in range(samplings) ] for _ in range(signals)])
-    S = np.array([ chebyt_samples(2, 0.1+i/10, samplings) for i in range(signals)])
+    S = np.array([ chebyt_code(2, 0.1+i/10, samplings) for i in range(signals)])
 
     T = S * B
 

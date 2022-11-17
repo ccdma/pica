@@ -10,7 +10,7 @@ np.random.seed(1)
 SIGNALS = 2
 SAMPLINGS = 300
 
-S = np.array([ const_powerd_samples(2, np.pi/(np.sqrt(2)+i), SAMPLINGS) for i in range(SIGNALS)]) 
+S = np.array([ const_power_code(2, np.pi/(np.sqrt(2)+i), SAMPLINGS) for i in range(SIGNALS)]) 
 
 # S = []
 # for s in SC:

@@ -22,8 +22,8 @@ solved = sp.solve((
 	alpha * x_0 + beta * y_0 - m_0
 ), (x_0, y_0))
 
-x_val = chebyt_samples(2, 0.1, 2)
-y_val = chebyt_samples(2, 0.2, 2)
+x_val = chebyt_code(2, 0.1, 2)
+y_val = chebyt_code(2, 0.2, 2)
 
 alpha_val = 1
 beta_val = 2

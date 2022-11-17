@@ -16,7 +16,7 @@ def odd_or_even(i: int):
 signals = 5
 samplings = 1000
 
-S = np.array([ const_powerd_samples(2, np.pi/(np.sqrt(2)+i), samplings) for i in range(signals)])
+S = np.array([ const_power_code(2, np.pi/(np.sqrt(2)+i), samplings) for i in range(signals)])
 
 B = np.array([[ odd_or_even(np.random.randint(0, 10)) for i in range(samplings) ] for _ in range(signals)])
 

@@ -28,8 +28,8 @@ solved = sp.solve(
 	(x1_0, x2_0, alpha_1, alpha_2)
 )
 
-x1_val = chebyt_samples(2, 0.1, 4)
-x2_val = chebyt_samples(2, 0.2, 4)
+x1_val = chebyt_code(2, 0.1, 4)
+x2_val = chebyt_code(2, 0.2, 4)
 
 alpha1_val = 1
 alpha2_val = 2

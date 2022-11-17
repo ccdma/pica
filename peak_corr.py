@@ -7,7 +7,7 @@ np.set_printoptions(suppress=True, linewidth=1000)
 SAMPLINGS = 10000
 SIGNALS = 2
 
-s = const_powerd_samples(2, 0.1, SAMPLINGS)
+s = const_power_code(2, 0.1, SAMPLINGS)
 s = s * np.tile(np.exp(np.linspace(0, 2*np.pi, 100)*(-1j)), 500)[:SAMPLINGS]
 # s = s[:500]
 # plt.plot(s.real, s.imag, lw=0.3)

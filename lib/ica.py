@@ -206,7 +206,7 @@ def BatchEASI(X: np.ndarray):
 return ndarray(dtype=complex)
 https://www.jstage.jst.go.jp/article/transcom/advpub/0/advpub_2017EBP3139/_article/-char/ja/
 """
-def weyl_samples(low_k: float, delta_k: float, length: int) -> np.ndarray:
+def weyl_code(low_k: float, delta_k: float, length: int) -> np.ndarray:
 	result = []
 	for n in range(length):
 		x_raw = n*low_k + delta_k
@@ -222,7 +222,7 @@ rad_0: 初期偏角(ラジアン)
 return: exp[rad_0*n^j] j=0,1,2...
 """
 @numba.njit("c16[:](i8,f8,i8)")
-def const_powerd_samples(n: int, rad_0: float, length: int) -> np.ndarray:
+def const_power_code(n: int, rad_0: float, length: int) -> np.ndarray:
 	result = []
 	prev = rad_0%(2*np.pi)
 	for i in range(length):
@@ -237,13 +237,13 @@ a0: 初期値
 length: 系列の長さ
 """
 @numba.njit("f8[:](i8,f8,i8)")
-def chebyt_samples(n: int, a0: float, length: int) -> np.ndarray:
-	return const_powerd_samples(n, np.cos(a0), length).real.astype(np.float64)
+def chebyt_code(n: int, a0: float, length: int) -> np.ndarray:
+	return const_power_code(n, np.cos(a0), length).real.astype(np.float64)
 
 """
 原子根符号
 int型でmodをとって計算するのでexactに計算可能
-const_powerd_samplesだと誤差が出る？
+const_powerd_samplesだと誤差が出る
 """
 @numba.njit("c16[:](i8,i8,i8,b1)")
 def primitive_root_code(p: int, q: int, k: int=1, add_1: bool = False) -> np.ndarray:

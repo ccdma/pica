@@ -7,8 +7,8 @@ import matplotlib.pyplot as plt
 correlation = []
 code_len = 1019
 
-X1 = const_powerd_samples(2, 0.1, code_len)
-X2 = const_powerd_samples(2, 0.2, code_len)
+X1 = const_power_code(2, 0.1, code_len)
+X2 = const_power_code(2, 0.2, code_len)
 
 for i in range(1, code_len):
 	correlation.append(np.vdot(X1, np.roll(X2, i)))
