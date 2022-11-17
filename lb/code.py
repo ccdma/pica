@@ -1,5 +1,6 @@
 import numba
 import numpy as np
+from .misc import *
 
 """
 ワイル系列を生成
@@ -54,31 +55,3 @@ def primitive_root_code(p: int, q: int, k: int=1) -> np.ndarray:
 		result.append(np.exp(-1j*2*np.pi*prev/p))
 		prev = (prev * q)%p
 	return np.complex128(result)
-
-"""
-素数判定
-"""
-def is_prime(n):
-    n = abs(n)
-    if n == 2: return True
-    if n < 2 or n&1 == 0: return False
-    return pow(2, n-1, n) == 1
-
-"""
-原子根かどうかを判定する
-"""
-def is_primitive_root(p: int, q: int) -> bool:
-	if q >= p:
-		return False
-	if p <= 1:
-		return False
-	if p == 2:
-		return True
-	if not is_prime(p):
-		return False
-	prev = 1
-	for i in range(1, p-1):
-		prev = (prev*q)%p
-		if prev == 1:
-			return False
-	return True

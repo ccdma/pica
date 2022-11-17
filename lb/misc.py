@@ -1,6 +1,8 @@
 import numpy as np
-from scipy.special import erfc
 
+"""
+平均二乗誤差
+"""
 def mse(A: np.ndarray, B: np.ndarray) -> float:
 	return ((A - B)**2).mean()
 
@@ -49,19 +51,29 @@ def bit_error_rate(bits1, bits2) -> np.ndarray:
 	return np.mean(np.abs(bits1 - bits2))/2.0
 
 """
-2つの行ごとの内積を計算する
+素数判定
 """
-def correlation(P: np.ndarray) -> np.ndarray:
-	res = np.eye(P.shape[0], dtype=P.dtype)
-	for i in range(P.shape[0]):
-		for j in range(P.shape[0]):
-			res[i][j] = (P[i]@P[j]) / P.shape[1]
-	return res
+def is_prime(n):
+    n = abs(n)
+    if n == 2: return True
+    if n < 2 or n&1 == 0: return False
+    return pow(2, n-1, n) == 1
 
 """
-N: code of length (array_like)
-sigma: noise size
-K: number of users (array_like)
+原子根かどうかを判定する
 """
-def cdma_ber(N, sigma, K: np.array):
-    return 1/2 * erfc(N/np.sqrt(2*((K-1)*N + sigma**2)))
+def is_primitive_root(p: int, q: int) -> bool:
+	if q >= p:
+		return False
+	if p <= 1:
+		return False
+	if p == 2:
+		return True
+	if not is_prime(p):
+		return False
+	prev = 1
+	for i in range(1, p-1):
+		prev = (prev*q)%p
+		if prev == 1:
+			return False
+	return True
