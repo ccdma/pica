@@ -38,14 +38,14 @@ def cdma(K: int, N: int, snr: float) -> EachReport:
     bpsk_data = np.complex64(bits)
     
     B = np.repeat(bpsk_data, N, axis=0).T
-    S = np.array([lb.mixed_primitive_root_code([(5, 2), (13, 2)], k) for k in range(1, K+1)])
-    # S = np.array([lb.primitive_root_code(N, 2, k, True) for k in range(1, K+1)])
-    # S = np.array([lb.const_power_code(2, np.random.rand(), N) for k in range(1, K+1)])
+    # S = np.array([lb.mixed_primitive_root_code([(5, 2), (13, 2)], k) for k in range(1, K+1)])
+    # S = np.array([lb.primitive_root_code(N, 2, k) for k in range(1, K+1)])
+    S = np.array([lb.const_power_code(2, np.random.rand(), N) for k in range(1, K+1)])
 
     T = B * S
     A = np.ones(K)
     MIXED = T.T @ A
-    AWGN = lb.gauss_matrix_by_snr(MIXED, snr, [N])
+    AWGN = lb.gauss_matrix_by_snr(MIXED, snr)
     X = MIXED + AWGN
 
     RB = np.repeat(X[None], K, axis=0)*np.conjugate(S)

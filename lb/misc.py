@@ -23,13 +23,12 @@ def snr(code, noise):
 SNRを指定してガウスノイズ行列を生成
 
 code: 混合後の信号
-shape: ノイズ行列の形
 """
-def gauss_matrix_by_snr(code, snr: float, shape):
+def gauss_matrix_by_snr(code, snr: float):
 	noise_log_mean_power = log_mean_power(code) - snr/10
 	noise_mean_power = 10**noise_log_mean_power
 	stddev = np.sqrt(noise_mean_power/2)
-	return np.random.normal(0, stddev, shape) + 1j*np.random.normal(0, stddev, shape)
+	return np.random.normal(0, stddev, code.shape) + 1j*np.random.normal(0, stddev, code.shape)
 
 """ 
 -0.5~+0.5なる混合行列を作成
