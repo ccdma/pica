@@ -16,7 +16,6 @@ class EachReport:
 class SummaryReport:
     K: int
     N: int
-    stddev: float
     ber: float
     snr: float
     complete: int
@@ -33,7 +32,7 @@ def make_code(N: int, K: int):
 K: number of users
 N: code length
 """
-def cdma(K: int, N: int, stddev: float) -> EachReport:
+def cdma(K: int, N: int, snr: float) -> EachReport:
     bits = ica.random_bits([1, K])
     bpsk_data = np.complex64(bits)
     
@@ -43,7 +42,7 @@ def cdma(K: int, N: int, stddev: float) -> EachReport:
     T = B * S
     A = np.ones(K)
     MIXED = T.T @ A
-    AWGN = ica.gauss_matrix_by_snr(MIXED, 20, [N])
+    AWGN = ica.gauss_matrix_by_snr(MIXED, snr, [N])
     X = MIXED + AWGN
 
     RB = np.repeat(X[None], K, axis=0)*np.conjugate(S)
@@ -56,21 +55,20 @@ def cdma(K: int, N: int, stddev: float) -> EachReport:
     return EachReport(ber=ber, snr=ica.snr(MIXED, AWGN))
 
 N = 61
-stddev = 0.1
+expected_snr = 10
 dataclass_csv.DataclassWriter(sys.stdout, [], SummaryReport).write()
 for K in range(2, 61):
     ber_sum = 0
     snr_sum = 0
     complete = 0
     for trial in range(10000):
-        report = cdma(K, N, stddev)
+        report = cdma(K, N, expected_snr)
         ber_sum += report.ber
         snr_sum += report.snr
         complete += 1
     dataclass_csv.DataclassWriter(sys.stdout, [SummaryReport(
         K=K,
         N=N,
-        stddev=stddev,
         ber=ber_sum/complete,
         snr=snr_sum/complete,
         complete=complete
