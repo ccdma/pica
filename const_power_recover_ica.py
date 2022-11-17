@@ -30,8 +30,8 @@ print(lb.correlation(np.vstack([S.real, S.imag])))
 r_res = lb.fast_ica(X.real, _assert=False)
 i_res = lb.fast_ica(X.imag, _assert=False)
 
-r_P = lb.simple_circulant_P(A, r_res.W)
-i_P = lb.simple_circulant_P(A, i_res.W)
+r_P = lb.estimate_circulant_matrix(A, r_res.W)
+i_P = lb.estimate_circulant_matrix(A, i_res.W)
 
 Y = r_P.T @ r_res.Y + i_P.T @ i_res.Y * 1j
 

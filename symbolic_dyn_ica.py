@@ -47,7 +47,7 @@ def test(signals: int, samplings: int, norm_scale: float):
     res = lb.fast_ica(X, _assert=False)
 
     Y = res.Y
-    P = lb.simple_circulant_P(A, res.W)
+    P = lb.estimate_circulant_matrix(A, res.W)
 
     S2 = P.T @ Y
 

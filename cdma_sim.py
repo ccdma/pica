@@ -47,12 +47,12 @@ def cdma(K: int, N: int, snr: float) -> EachReport:
     B = np.repeat(bpsk_data, N, axis=0).T
     # S = np.array([mixed_primitive_root_code(5, 2, 13, 2, k) for k in range(1, K+1)])
     # S = np.array([ica.primitive_root_code(N, 2, k, True) for k in range(1, K+1)])
-    S = np.array([ica.const_power_code(2, np.random.rand(), N) for k in range(1, K+1)])
+    S = np.array([lb.const_power_code(2, np.random.rand(), N) for k in range(1, K+1)])
 
     T = B * S
     A = np.ones(K)
     MIXED = T.T @ A
-    AWGN = ica.gauss_matrix_by_snr(MIXED, snr, [N])
+    AWGN = lb.gauss_matrix_by_snr(MIXED, snr, [N])
     X = MIXED + AWGN
 
     RB = np.repeat(X[None], K, axis=0)*np.conjugate(S)
@@ -60,9 +60,9 @@ def cdma(K: int, N: int, snr: float) -> EachReport:
     rbpsk_data = np.mean(RB, axis=1)
     rbits = np.sign(rbpsk_data.real)
 
-    ber = ica.bit_error_rate(bits, rbits)
+    ber = lb.bit_error_rate(bits, rbits)
 
-    return EachReport(ber=ber, snr=ica.snr(MIXED, AWGN))
+    return EachReport(ber=ber, snr=lb.snr(MIXED, AWGN))
 
 N = 65
 expected_snr = 5
