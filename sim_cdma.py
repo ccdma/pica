@@ -55,9 +55,11 @@ def cdma(K: int, N: int, snr: float, seed: int) -> EachReport:
 	return EachReport(ber=ber, snr=lb.snr(MIXED, AWGN))
 
 def main():
+	delimiter="\t"
+	dataclass_csv.DataclassWriter(sys.stdout, [], SummaryReport, delimiter=delimiter).write()
+
 	N = 65
 	expected_snr = 5
-	dataclass_csv.DataclassWriter(sys.stdout, [], SummaryReport).write()
 	for K in range(2, N):
 		ber_sum = 0
 		snr_sum = 0
@@ -80,7 +82,7 @@ def main():
 			snr=snr_sum/complete,
 			complete=complete,
 			time=time.perf_counter()-start_time
-		)], SummaryReport).write(skip_header=True)
+		)], SummaryReport, delimiter=delimiter).write(skip_header=True)
 
 if __name__ == '__main__':
 	with warnings.catch_warnings():
