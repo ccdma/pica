@@ -1,3 +1,3 @@
-from ica import *
-from misc import *
-from code import *
+from .ica import *
+from .misc import *
+from .code import *

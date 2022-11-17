@@ -29,7 +29,6 @@ import math
 def lcm(a: int, b: int):
     return a * b // math.gcd(a, b)
 
-# @numba.njit("c16[:](i8,i8,i8,i8,i8)")
 def mixed_primitive_root_code(p_a, q_a, p_b, q_b, k=1):
     lcm_ab = lcm(p_a, p_b)
     code_a = np.tile(lb.primitive_root_code(p_a, q_a, k, True), lcm_ab//p_a)
