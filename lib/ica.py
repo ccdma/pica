@@ -1,9 +1,7 @@
-from os import error
-from pprint import pprint
 import numpy.linalg as la
 import numpy as np
 from scipy.special import eval_chebyt, eval_chebyu, erfc
-import dataclasses, math
+import dataclasses
 
 @dataclasses.dataclass
 class FastICAResult:
@@ -249,10 +247,12 @@ def const_powerd_samples(n: int, rad_0: float, length: int) -> np.ndarray:
 int型でmodをとって計算するのでexactに計算可能
 const_powerd_samplesだと誤差が出る？
 """
-def primitive_root_code(p: int, q: int, k: int=1) -> np.ndarray:
+def primitive_root_code(p: int, q: int, k: int=1, add_1: bool = False) -> np.ndarray:
 	if not is_primitive_root(p, q):
 		raise Exception(f"(p={p},q={q}) is not primitive root.")
 	result = []
+	if add_1:
+		result.append(1.0)
 	prev = k
 	for i in range(p-1):
 		result.append(np.exp(-1j*2*np.pi*prev/p))
@@ -299,6 +299,12 @@ def random_matrix(size: int) -> np.ndarray:
 """
 def random_bits(shape) -> np.ndarray:
 	return np.sign(np.random.rand(*shape) - 0.5)
+
+"""
+±1のビットでBERを計測
+"""
+def bit_error_rate(bits1, bits2) -> np.ndarray:
+	return np.mean(np.abs(bits1 - bits2))/2.0
 
 def simple_circulant_P(A, W):
 	G = W @ A
