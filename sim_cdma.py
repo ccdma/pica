@@ -83,13 +83,13 @@ def cdma(K: int, N: int, snr: float, seed: int) -> EachReport:
 def do_trial(K: int, N: int):
 	expected_snr = 5
 	accumlator = ReportAccumulator(K, N)
-	for trial in range(10000):
+	for trial in range(100000):
 		try:
 			report = cdma(K, N, expected_snr, trial)
 			accumlator.add(report)
 		except Warning as e:
 			pass
-	dataclass_csv.DataclassWriter(sys.stdout, [accumlator.summary()], SummaryReport, delimiter=DELIMITER).write(skip_header=True)
+	return accumlator.summary()
 
 def main():
 	dataclass_csv.DataclassWriter(sys.stdout, [], SummaryReport, delimiter=DELIMITER).write()
@@ -97,7 +97,8 @@ def main():
 	N = 65
 	with futu.ProcessPoolExecutor(max_workers=multiprocessing.cpu_count()-1) as executor:
 		futures = [executor.submit(do_trial, K, N) for K in range(2, N)]
-		futu.wait(futures)
+		for future in futu.as_completed(futures):
+			dataclass_csv.DataclassWriter(sys.stdout, [future.result()], SummaryReport, delimiter=DELIMITER).write(skip_header=True)
 
 if __name__ == '__main__':
 	with warnings.catch_warnings():
