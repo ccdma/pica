@@ -202,17 +202,6 @@ def BatchEASI(X: np.ndarray):
 	Y = np.array(YT).T
 	return EASIResult(Y=Y)
 
-def simple_circulant_P(A, W):
-	G = W @ A
-	P = np.zeros(G.shape)
-	for i, g in enumerate(G):
-		mi = np.argmax(np.abs(g))
-		if g[mi] > 0:
-			P[i,mi] = 1
-		else:
-			P[i,mi] = -1
-	return P
-
 """
 チェビシェフ系列を生成（第一種）
 deg: チェビシェフ多項式の次数
@@ -303,7 +292,24 @@ def is_primitive_root(p: int, q: int) -> np.array:
 size: 正方行列のサイズ
 """
 def random_matrix(size: int) -> np.ndarray:
-	return np.array([[np.random.rand()-0.5 for i in range(size)] for j in range(size) ])
+	return np.random.rand(size, size)-0.5
+
+"""
+±1のランダム行列を生成
+"""
+def random_bits(shape) -> np.ndarray:
+	return np.sign(np.random.rand(*shape) - 0.5)
+
+def simple_circulant_P(A, W):
+	G = W @ A
+	P = np.zeros(G.shape)
+	for i, g in enumerate(G):
+		mi = np.argmax(np.abs(g))
+		if g[mi] > 0:
+			P[i,mi] = 1
+		else:
+			P[i,mi] = -1
+	return P
 
 """
 2つの行ごとの内積を計算し、行列にまとめます
@@ -394,3 +400,5 @@ K: number of users (array_like)
 """
 def cdma_ber(N, sigma, K: np.array):
     return 1/2 * erfc(N/np.sqrt(2*((K-1)*N + sigma**2)))
+
+
