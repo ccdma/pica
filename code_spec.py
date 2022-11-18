@@ -5,15 +5,14 @@ import lb
 import numpy as np
 import matplotlib.pyplot as plt
 
-pq_list = [(13, 2), (11, 2)]
-code_1 = lb.mixed_primitive_root_code_without1(pq_list, 1)
-code_2 = lb.mixed_primitive_root_code_without1(pq_list, 2)
+pq_list = [(61, 2)]
+code_1 = lb.mixed_primitive_root_code(pq_list, 1)
 code_len = code_1.shape[0]
+code_2 = lb.mixed_primitive_root_code(pq_list, 4)
 
 correlations = []
-for roll in range(code_len):
-	rolled_code_2 = np.roll(code_2, roll)
-	correlations.append(np.vdot(code_1, rolled_code_2) / code_len)
+for roll in range(0, code_len):
+	correlations.append(np.abs(np.vdot(code_1, np.roll(code_2, roll))) / code_len)
 
 # 相関をプロット
 plt.plot(correlations)
