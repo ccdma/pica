@@ -5,9 +5,9 @@ import lb
 import numpy as np
 import matplotlib.pyplot as plt
 
-pq_list = [(13, 2), (19, 2)]
-code_1 = lb.mixed_primitive_root_code(pq_list, 1)
-code_2 = lb.mixed_primitive_root_code(pq_list, 2)
+pq_list = [(13, 2), (11, 2)]
+code_1 = lb.mixed_primitive_root_code_without1(pq_list, 1)
+code_2 = lb.mixed_primitive_root_code_without1(pq_list, 2)
 code_len = code_1.shape[0]
 
 correlations = []
