@@ -60,10 +60,26 @@ def primitive_root_code(p: int, q: int, k: int=1) -> np.ndarray:
 """
 原始根^n符号
 pq_list: (p,q)のリスト
+
+2コの場合:
+k: N
+θn = q^n / p
+Ψn = q'^n / p'
+Xn = exp(-2j*π*θn*k)*exp(-2j*π*Ψn*k)
 """
 def mixed_primitive_root_code(pq_list: list[tuple[int, int]], k: int):
 	code_len = math.lcm(*map(lambda pq: pq[0], pq_list))
 	code = np.ones(code_len, dtype=np.complex128)
 	for p,q in pq_list:
 		code *= np.tile(primitive_root_code(p, q, k), code_len//p)
+	return code
+
+"""
+原始根^n符号（先頭に1を含まない）
+"""
+def mixed_primitive_root_code_without1(pq_list: list[tuple[int, int]], k: int):
+	code_len = math.lcm(*map(lambda pq: pq[0]-1, pq_list))
+	code = np.ones(code_len, dtype=np.complex128)
+	for p,q in pq_list:
+		code *= np.tile(primitive_root_code(p, q, k)[1:], code_len//(p-1))
 	return code
