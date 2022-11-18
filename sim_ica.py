@@ -7,6 +7,7 @@ import lb
 import dataclasses, sys, warnings, multiprocessing, time
 from dataclass_csv import DataclassWriter
 import concurrent.futures as futu
+import random as rand
 
 DELIMITER="\t"
 MAX_WORKERS = multiprocessing.cpu_count()-1
@@ -60,8 +61,8 @@ def ica(K: int, N: int, snr: float, seed: int):
 
 	B = lb.random_bits([K, N])
 
-	# S = np.array([lb.mixed_primitive_root_code([(53, 2), (19, 2)], k) for k in range(1, K+1)])
-	# S = np.array([lb.primitive_root_code(N, 2, k) for k in range(1, K+1)])
+	S = np.array([lb.mixed_primitive_root_code([(53, 2), (19, 2)], k) for k in rand.sample(range(1, N+1), K)])
+	# S = np.array([lb.primitive_root_code(N, 2, k) for k in rand.sample(range(1, N+1), K)])
 	S = np.array([lb.const_power_code(2, np.random.rand(), N) for k in range(1, K+1)])
 	
 	T = B * S
