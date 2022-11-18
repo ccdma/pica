@@ -5,10 +5,11 @@ import lb
 import numpy as np
 import matplotlib.pyplot as plt
 import dataclasses, sys, warnings, multiprocessing, time
-import dataclass_csv
+from dataclass_csv import DataclassWriter
 import concurrent.futures as futu
 
 DELIMITER="\t"
+MAX_WORKERS = multiprocessing.cpu_count()-1
 
 np.random.seed(0)
 
@@ -95,13 +96,13 @@ def do_trial(K: int, N: int):
 	return accumlator.summary()
 
 def main():
-	dataclass_csv.DataclassWriter(sys.stdout, [], SummaryReport, delimiter=DELIMITER).write()
+	DataclassWriter(sys.stdout, [], SummaryReport, delimiter=DELIMITER).write()
 
 	N = 5
-	with futu.ProcessPoolExecutor(max_workers=multiprocessing.cpu_count()-1) as executor:
+	with futu.ProcessPoolExecutor(max_workers=MAX_WORKERS) as executor:
 		futures = [executor.submit(do_trial, K, N) for K in range(2, N)]
 		for future in futu.as_completed(futures):
-			dataclass_csv.DataclassWriter(sys.stdout, [future.result()], SummaryReport, delimiter=DELIMITER).write(skip_header=True)
+			DataclassWriter(sys.stdout, [future.result()], SummaryReport, delimiter=DELIMITER).write(skip_header=True)
 
 if __name__ == '__main__':
 	with warnings.catch_warnings():
