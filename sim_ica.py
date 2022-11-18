@@ -12,7 +12,7 @@ import random as rand
 DELIMITER="\t"
 MAX_WORKERS = multiprocessing.cpu_count()-1
 
-np.random.seed(0)
+lb.set_seed(0)
 
 @dataclasses.dataclass
 class EachReport:
@@ -57,7 +57,7 @@ K: number of Users
 N: code length
 """
 def ica(K: int, N: int, snr: float, seed: int):
-	np.random.seed(seed)
+	lb.set_seed(seed)
 
 	B = lb.random_bits([K, N])
 

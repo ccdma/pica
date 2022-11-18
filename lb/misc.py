@@ -1,4 +1,5 @@
 import numpy as np
+import random
 
 """
 平均二乗誤差
@@ -94,3 +95,10 @@ def each_row_roll(A, r):
     r[r < 0] += A.shape[1]
     column_indices = column_indices - r[:,np.newaxis]
     return A[rows, column_indices]
+
+"""
+seedを一括で設定する
+"""
+def set_seed(x):
+	np.random.seed(x)
+	random.seed(x)

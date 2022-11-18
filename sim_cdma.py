@@ -12,7 +12,7 @@ import random as rand
 DELIMITER="\t"
 MAX_WORKERS = multiprocessing.cpu_count()-1
 
-np.random.seed(0)
+lb.set_seed(0)
 
 @dataclasses.dataclass
 class EachReport:
@@ -58,7 +58,7 @@ N: code length
 sync: Trueならビット同期
 """
 def cdma(K: int, N: int, snr: float, sync: bool, seed: int) -> EachReport:
-	np.random.seed(seed)
+	lb.set_seed(seed)
 
 	bits = lb.random_bits([1, K])
 	bpsk_data = np.complex64(bits)
