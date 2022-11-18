@@ -2,7 +2,7 @@
 任意の配分におけるT2による2信号の分離を解析的に行う 
 """
 import sympy as sp
-from lib.ica import *
+import lb
 
 def T2(x):
 	return 2*x**2 - 1
@@ -22,8 +22,8 @@ solved = sp.solve((
 	alpha * x_0 + beta * y_0 - m_0
 ), (x_0, y_0))
 
-x_val = chebyt_code(2, 0.1, 2)
-y_val = chebyt_code(2, 0.2, 2)
+x_val = lb.chebyt_code(2, 0.1, 2)
+y_val = lb.chebyt_code(2, 0.2, 2)
 
 alpha_val = 1
 beta_val = 2

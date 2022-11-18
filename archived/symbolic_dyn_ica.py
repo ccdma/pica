@@ -1,8 +1,7 @@
 """
 実数信号においてシンボリックダイナミクスで挙動を確認
 """
-from numpy import random
-from lib.ica import *
+import lb
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -35,20 +34,20 @@ SAMPLINGS = 1000
 def test(signals: int, samplings: int, norm_scale: float):
 
     B = np.array([[ odd_or_even(np.random.randint(0, 10)) for i in range(samplings) ] for _ in range(signals)])
-    S = np.array([ chebyt_code(2, 0.1+i/10, samplings) for i in range(signals)])
+    S = np.array([ lb.chebyt_code(2, 0.1+i/10, samplings) for i in range(signals)])
 
     T = S * B
 
-    print(correlation(T))
+    print(lb.correlation(T))
 
-    A = random_matrix(signals)
+    A = lb.random_matrix(signals)
 
     X = A @ T + np.random.normal(0.0, norm_scale, (signals, samplings))
 
-    res = FastICA(X, _assert=False)
+    res = lb.fast_ica(X, _assert=False)
 
     Y = res.Y
-    P = simple_circulant_P(A, res.W)
+    P = lb.estimate_circulant_matrix(A, res.W)
 
     S2 = P.T @ Y
 

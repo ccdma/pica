@@ -1,8 +1,7 @@
 """
 原始根符号によるパワー一定符号のIQプロット
 """
-import itertools
-from lib.ica import *
+import lb
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -18,7 +17,7 @@ fig.suptitle(f"primitive root code (generated)", fontsize=12)
 fig.gca().set_aspect('equal','datalim')
 
 def plot_primitive(p, q, ax):
-	samplings = primitive_root_code(p, q)
+	samplings = lb.primitive_root_code(p, q)[1:]
 	ax.scatter(samplings.real, samplings.imag, s=1)
 	ax.plot(samplings.real, samplings.imag, lw=0.2)
 	# ax.scatter(samplings.real[0], samplings.imag[0])

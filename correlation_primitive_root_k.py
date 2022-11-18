@@ -1,20 +1,22 @@
-from lib.ica import *
+"""
+原始根符号の相関特性(kを変えた場合)
+"""
+import lb
+import numpy as np
 import matplotlib.pyplot as plt
 
 p = 1019
 q = 2
 
 print((p-1)/2)
-print(is_prime(int((p-1)/2)))
+print(lb.is_prime(int((p-1)/2)))
 
 exact_correlation = []
 
 for i in range(p-2):
-	X1 = primitive_root_code(p, q, 1, False)
-	X2 = primitive_root_code(p, q, i+2, False)
+	X1_1 = lb.primitive_root_code(p, q, 1)
+	X2_1 = lb.primitive_root_code(p, q, i+2)
 
-	X1_1 = np.append(1, X1)
-	X2_1 = np.append(1, X2)
 	exact_correlation.append(np.vdot(X1_1, X2_1))
 
 plt.plot(np.abs(np.array(exact_correlation)/p))
