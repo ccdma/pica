@@ -17,38 +17,6 @@ for roll in range(code_len):
 
 # 相関をプロット
 plt.plot(correlations)
-
-# correlations = []
-# for roll in range(code_len):
-# 	rolled_code_2 = np.roll(code_1, roll)
-# 	correlations.append(np.vdot(code_1, rolled_code_2) / code_len)
-
-# # 相関をプロット
-# plt.plot(correlations, color="red")
-
-pq_list = [(269, 2)]
-code_1 = lb.mixed_primitive_root_code(pq_list, 1)
-code_2 = lb.mixed_primitive_root_code(pq_list, 2)
-code_len = code_1.shape[0]
-
-correlations = []
-for roll in range(code_len):
-	rolled_code_2 = np.roll(code_2, roll)
-	correlations.append(np.vdot(code_1, rolled_code_2) / code_len)
-
-plt.plot(correlations, color="orange")
-
-code_1 = lb.const_power_code(2, 0.1, 255)
-code_2 = lb.const_power_code(2, 0.3, 255)
-code_len = code_1.shape[0]
-
-correlations = []
-for roll in range(code_len):
-	rolled_code_2 = np.roll(code_2, roll)
-	correlations.append(np.vdot(code_1, rolled_code_2) / code_len)
-
-plt.plot(correlations, color="green")
-
 plt.title(f"correlation of X(k1=1) and X(k2=2)")
 plt.xlabel("roll")
 plt.ylabel("correlation")
