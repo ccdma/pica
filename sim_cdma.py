@@ -98,7 +98,7 @@ def do_trial(K: int, N: int):
 def main():
 	DataclassWriter(sys.stdout, [], SummaryReport, delimiter=DELIMITER).write()
 
-	N = 5
+	N = 65
 	with futu.ProcessPoolExecutor(max_workers=MAX_WORKERS) as executor:
 		futures = [executor.submit(do_trial, K, N) for K in range(2, N)]
 		for future in futu.as_completed(futures):
