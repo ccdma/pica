@@ -5,18 +5,26 @@ import lb
 import numpy as np
 import matplotlib.pyplot as plt
 
-pq_list = [(61, 2)]
+def get_correlations(code_1: np.ndarray, code_2: np.ndarray):
+	code_len = code_1.shape[0]
+	code_1_expand = np.tile(code_1[None], (code_len, 1))
+	code_2_expand = lb.each_row_roll(np.tile(code_2[None], (code_len, 1)), np.arange(code_len))
+	return np.mean(code_1_expand * np.conj(code_2_expand), axis=1)
+
+pq_list = [(11, 2)]
 code_1 = lb.mixed_primitive_root_code(pq_list, 1)
 code_len = code_1.shape[0]
-code_2 = lb.mixed_primitive_root_code(pq_list, 4)
+code_2 = lb.mixed_primitive_root_code(pq_list, 2)
 
 correlations = []
 for roll in range(0, code_len):
 	correlations.append(np.abs(np.vdot(code_1, np.roll(code_2, roll))) / code_len)
 
+# print(get_correlations(code_1, code_2))
 # 相関をプロット
 plt.plot(correlations)
-plt.title(f"correlation of X(k1=1) and X(k2=2)")
+plt.plot(np.abs(get_correlations(code_1, code_2)))
+plt.title(f"correlation of X(k1=1) and X(k2)")
 plt.xlabel("roll")
 plt.ylabel("correlation")
 plt.tight_layout()
