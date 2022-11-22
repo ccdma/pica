@@ -102,3 +102,12 @@ seedを一括で設定する
 def set_seed(x):
 	np.random.seed(x)
 	random.seed(x)
+
+"""
+2つの系列の相互相関を求める
+"""
+def cross_correlations(code_1: np.ndarray, code_2: np.ndarray):
+	code_len = code_1.shape[0]
+	code_1_expand = np.tile(code_1[None], (code_len, 1))
+	code_2_expand = each_row_roll(np.tile(code_2[None], (code_len, 1)), np.arange(code_len))
+	return np.mean(code_1_expand * np.conj(code_2_expand), axis=1) # np.vdot
