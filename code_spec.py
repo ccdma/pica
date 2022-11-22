@@ -43,28 +43,33 @@ def find_p_xxx(q: int=2):
 		if lb.is_primitive_root(p, q): p_list(p)
 	return p_list
 
-q = 2
-p_b = 11
-pq_list = [(p_b, 2), (3, 2)]
+q = 3
+p_b = 19
+pq_list = [(p_b, q),(5, q)]
 
 code_1 = lb.mixed_primitive_root_code(pq_list, 1)
 code_len = code_1.shape[0]
-c = []
+c_max = []
+c_avg = []
 for k in range(1, code_len):
 	code_2 = lb.mixed_primitive_root_code(pq_list, k)
-	c.append(np.max(np.abs(lb.cross_correlations(code_1, code_2))))
+	cc = lb.cross_correlations(code_1, code_2)
+	c_max.append(np.max(np.abs(cc)))
+	c_avg.append(np.mean(np.abs(cc)))
 
 # 相関をプロット
-# plt.plot(c)
-# plt.title(f"correlation of X(k1=1) and X(k2)")
-# plt.xlabel("roll")
-# plt.ylabel("correlation")
-# plt.tight_layout()
-# plt.show()
+plt.plot(c_max)
+plt.plot(c_avg)
+# plt.plot(np.abs(lb.cross_correlations(code_1, code_1)))
+plt.title(f"correlation of X(k1=1) and X(k2)")
+plt.xlabel("k2")
+plt.ylabel("correlation")
+plt.tight_layout()
+plt.show()
 
 # # IQをプロット
-plt.scatter(code_1.real, code_1.imag, s=1)
-plt.plot(code_1.real, code_1.imag, lw=1.0)
-plt.title(f"IQ plot of (p, q)={pq_list}: X(k1=1) and X(k2=2,roll=1)")
-plt.gca().set_aspect('equal','datalim')
-plt.show()
+# plt.scatter(code_1.real, code_1.imag, s=1)
+# plt.plot(code_1.real, code_1.imag, lw=1.0)
+# plt.title(f"IQ plot of (p, q)={pq_list}: X(k1=1) and X(k2=2,roll=1)")
+# plt.gca().set_aspect('equal','datalim')
+# plt.show()
