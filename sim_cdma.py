@@ -64,10 +64,10 @@ def cdma(K: int, N: int, snr: float, sync: bool, seed: int) -> EachReport:
 	bpsk_data = np.complex64(bits)
 	
 	B = np.repeat(bpsk_data, N, axis=0).T
-	S = np.array([lb.mixed_primitive_root_code([(5, 2), (13, 2)], k) for k in rand.sample(range(1, N+1), K)])
+	# S = np.array([lb.mixed_primitive_root_code([(3, 2), (11, 2)], k) for k in rand.sample(range(1, N+1), K)])
 	# S = np.array([lb.primitive_root_code(N, 2, k) for k in rand.sample(range(1, N+1), K)])
 	# S = np.array([lb.primitive_root_code(N+1, 2, k)[1:] for k in rand.sample(range(1, N+1), K)])
-	# S = np.array([lb.const_power_code(2, np.random.rand(), N) for _ in range(1, K+1)])
+	S = np.array([lb.const_power_code(2, np.random.rand(), N) for _ in range(1, K+1)])
 
 	if not sync: S = lb.each_row_roll(S, np.random.randint(0, N, K))
 	T = B * S
@@ -101,7 +101,7 @@ def do_trial(K: int, N: int):
 def main():
 	DataclassWriter(sys.stdout, [], SummaryReport, delimiter=DELIMITER).write()
 
-	N = 65
+	N = 33
 	with futu.ProcessPoolExecutor(max_workers=MAX_WORKERS) as executor:
 		futures = [executor.submit(do_trial, K, N) for K in range(2, N)]
 		for future in futu.as_completed(futures):
