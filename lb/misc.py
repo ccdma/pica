@@ -1,5 +1,7 @@
 import numpy as np
-import random
+import random, math
+import numba
+from functools import lru_cache
 
 """
 平均二乗誤差
@@ -60,8 +62,19 @@ def is_prime(n):
     return pow(2, n-1, n) == 1
 
 """
+素数判定（is_prime()より遅いのでnumba内での呼び出し時のみ使用）
+"""
+@numba.njit("b1(i8)")
+def x_is_prime(n):
+	sqrt_n = int(math.sqrt(n))
+	for i in range(2, sqrt_n+1):
+		if n%i == 0: return False
+	return True
+
+"""
 原子根かどうかを判定する
 """
+@numba.njit("b1(i8,i8)")
 def is_primitive_root(p: int, q: int) -> bool:
 	if q >= p:
 		return False
@@ -69,7 +82,7 @@ def is_primitive_root(p: int, q: int) -> bool:
 		return False
 	if p == 2:
 		return True
-	if not is_prime(p):
+	if not x_is_prime(p):
 		return False
 	prev = 1
 	for i in range(1, p-1):
