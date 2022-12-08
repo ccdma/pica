@@ -57,7 +57,7 @@ K: number of users
 N: code length
 sync: Trueならビット同期
 """
-def cdma(K: int, N: int, snr: float, sync: bool, seed: int) -> EachReport:
+def cdma(K: int, N: int, snr: float, _async: bool, seed: int) -> EachReport:
 	lb.set_seed(seed)
 
 	bits = lb.random_bits([1, K])
@@ -69,7 +69,7 @@ def cdma(K: int, N: int, snr: float, sync: bool, seed: int) -> EachReport:
 	# S = np.array([lb.primitive_root_code(N+1, 2, k)[1:] for k in rand.sample(range(1, N+1), K)])
 	S = np.array([lb.const_power_code(2, np.random.rand(), N) for _ in range(1, K+1)])
 
-	if not sync: S = lb.each_row_roll(S, np.random.randint(0, N, K))
+	if _async: S = lb.each_row_roll(S, np.random.randint(0, N, K))
 	T = B * S
 
 	A = np.ones(K)
@@ -87,14 +87,14 @@ def cdma(K: int, N: int, snr: float, sync: bool, seed: int) -> EachReport:
 	return EachReport(ber=ber, snr=lb.snr(MIXED, AWGN))
 
 N = 3*5
+K = 3
+_async = True
 
 def do_trial(expected_snr: float):
-	K = 3
-	sync = False
 	accumlator = ReportAccumulator(K, N)
 	for trial in range(100000):
 		try:
-			report = cdma(K, N, expected_snr, sync, trial)
+			report = cdma(K, N, expected_snr, _async, trial)
 			accumlator.add(report)
 		except Warning as e:
 			pass
