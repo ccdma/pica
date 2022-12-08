@@ -10,7 +10,7 @@ import concurrent.futures as futu
 import random as rand
 
 DELIMITER=","
-MAX_WORKERS = multiprocessing.cpu_count()-1
+MAX_WORKERS = 1 # multiprocessing.cpu_count()-1
 
 lb.set_seed(0)
 
@@ -52,6 +52,11 @@ class ReportAccumulator:
 			time=time.perf_counter()-self.start_time
 		)
 
+def estimate_roll(X: np.ndarray, S: np.ndarray, K: int, N: int):
+	
+	RB = np.repeat(X[None], K, axis=0)*np.conjugate(S)
+	pass
+
 """
 K: number of users
 N: code length
@@ -65,12 +70,13 @@ def cdma(K: int, N: int, snr: float, _async: bool, seed: int) -> EachReport:
 	
 	B = np.repeat(bpsk_data, N, axis=0).T
 	# S = np.array([lb.mixed_primitive_root_code([(3, 2), (5, 2)], k) for k in rand.sample(range(1, K+1), K)])
-	# S = np.array([lb.primitive_root_code(N, 2, k) for k in rand.sample(range(1, N+1), K)])
+	S = np.array([lb.primitive_root_code(N, 2, k) for k in rand.sample(range(1, N+1), K)])
 	# S = np.array([lb.primitive_root_code(N+1, 2, k)[1:] for k in rand.sample(range(1, N+1), K)])
-	S = np.array([lb.const_power_code(2, np.random.rand(), N) for _ in range(1, K+1)])
+	# S = np.array([lb.const_power_code(2, np.random.rand(), N) for _ in range(1, K+1)])
 
-	if _async: S = lb.each_row_roll(S, np.random.randint(0, N, K))
-	T = B * S
+	ROLL = np.random.randint(0, N, K) if _async else np.zeros(K, dtype=int)
+
+	T = B * lb.each_row_roll(S, ROLL)
 
 	A = np.ones(K)
 	MIXED = T.T @ A
@@ -86,9 +92,9 @@ def cdma(K: int, N: int, snr: float, _async: bool, seed: int) -> EachReport:
 
 	return EachReport(ber=ber, snr=lb.snr(MIXED, AWGN))
 
-N = 3*5
-K = 3
-_async = True
+N = 11
+K = 2
+_async = False
 
 def do_trial(expected_snr: float):
 	accumlator = ReportAccumulator(K, N)
@@ -104,7 +110,7 @@ def main():
 	DataclassWriter(sys.stdout, [], SummaryReport, delimiter=DELIMITER).write()
 
 	with futu.ProcessPoolExecutor(max_workers=MAX_WORKERS) as executor:
-		futures = [executor.submit(do_trial, expected_snr) for expected_snr in np.linspace(1.0, 5.0, 20)]
+		futures = [executor.submit(do_trial, expected_snr) for expected_snr in [100]]
 		for future in futu.as_completed(futures):
 			DataclassWriter(sys.stdout, [future.result()], SummaryReport, delimiter=DELIMITER).write(skip_header=True)
 
