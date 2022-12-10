@@ -1,5 +1,5 @@
 """
-符号の特性を観察する
+原始根^n符号の特性を観察する
 """
 import lb
 import numpy as np

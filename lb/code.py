@@ -8,13 +8,14 @@ from .misc import *
 return ndarray(dtype=complex)
 https://www.jstage.jst.go.jp/article/transcom/advpub/0/advpub_2017EBP3139/_article/-char/ja/
 """
+@numba.njit("c16[:](f8,f8,i8)")
 def weyl_code(low_k: float, delta_k: float, length: int) -> np.ndarray:
 	result = []
 	for n in range(length):
 		x_raw = n*low_k + delta_k
-		x = x_raw - np.floor(x_raw)
-		result.append(np.exp(2 * np.pi * 1j * x))
-	return np.array(result)
+		x = x_raw - math.floor(x_raw)
+		result.append(np.exp(2j*np.pi*x))
+	return np.complex128(result)
 
 """
 複素数系列を生成
