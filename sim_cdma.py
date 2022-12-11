@@ -76,8 +76,8 @@ def cdma(K: int, N: int, snr: float, _async: bool, seed: int) -> EachReport:
 	bpsk_data = np.complex64(bits)
 	
 	B = np.repeat(bpsk_data, N, axis=0).T	# shape=(K, N)
-	S = np.array([lb.mixed_primitive_root_code([(3, 2), (5, 2)], k) for k in rand.sample(range(1, K+1), K)])
-	# S = np.array([lb.primitive_root_code(N, 2, k) for k in rand.sample(range(1, N+1), K)])
+	# S = np.array([lb.mixed_primitive_root_code([(3, 2), (5, 2)], k) for k in rand.sample(range(1, K+1), K)])
+	S = np.array([lb.primitive_root_code(N, 2, k) for k in rand.sample(range(1, N+1), K)])
 	# S = np.array([lb.primitive_root_code(N+1, 2, k)[1:] for k in rand.sample(range(1, N+1), K)])
 	# S = np.array([lb.const_power_code(2, np.random.rand(), N) for _ in range(1, K+1)])
 
@@ -101,9 +101,9 @@ def cdma(K: int, N: int, snr: float, _async: bool, seed: int) -> EachReport:
 
 	return EachReport(ber=ber, snr=lb.snr(MIXED, AWGN))
 
-N = 15
+N = 19
 K = 3
-_async = False
+_async = True
 
 def do_trial(expected_snr: float):
 	accumlator = ReportAccumulator(K, N)
@@ -119,7 +119,7 @@ def main():
 	DataclassWriter(sys.stdout, [], SummaryReport, delimiter=DELIMITER).write()
 
 	with futu.ProcessPoolExecutor(max_workers=MAX_WORKERS) as executor:
-		futures = [executor.submit(do_trial, expected_snr) for expected_snr in np.linspace(1.0, 5.0, 20)]
+		futures = [executor.submit(do_trial, expected_snr) for expected_snr in np.linspace(1.0, 20.0, 20)]
 		for future in futu.as_completed(futures):
 			DataclassWriter(sys.stdout, [future.result()], SummaryReport, delimiter=DELIMITER).write(skip_header=True)
 
