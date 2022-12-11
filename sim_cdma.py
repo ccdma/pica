@@ -2,6 +2,7 @@
 CDMAのシュミレーション
 """
 import lb
+import numba
 import numpy as np
 import matplotlib.pyplot as plt
 import dataclasses, sys, warnings, multiprocessing, time
@@ -10,7 +11,7 @@ import concurrent.futures as futu
 import random as rand
 
 DELIMITER=","
-MAX_WORKERS = 1 # multiprocessing.cpu_count()-1
+MAX_WORKERS = multiprocessing.cpu_count()-1
 
 lb.set_seed(0)
 
@@ -52,10 +53,16 @@ class ReportAccumulator:
 			time=time.perf_counter()-self.start_time
 		)
 
+"""
+自己相関からrollを推定する
+"""
+@numba.njit("i8[:](c16[:],c16[:,:],i8,i8)")
 def estimate_roll(X: np.ndarray, S: np.ndarray, K: int, N: int):
-	
-	RB = np.repeat(X[None], K, axis=0)*np.conjugate(S)
-	pass
+	roll_bpsk = np.empty((K, N), dtype=np.complex128)
+	for roll in range(N):
+		roll_RB = np.repeat(X, K).reshape((-1, K)).T*np.conjugate(np.roll(S, roll))
+		roll_bpsk[:, roll] = np.sum(roll_RB, axis=1)
+	return np.argmax(np.abs(roll_bpsk), axis=1).astype(np.int64)
 
 """
 K: number of users
@@ -68,13 +75,13 @@ def cdma(K: int, N: int, snr: float, _async: bool, seed: int) -> EachReport:
 	bits = lb.random_bits([1, K])
 	bpsk_data = np.complex64(bits)
 	
-	B = np.repeat(bpsk_data, N, axis=0).T
-	# S = np.array([lb.mixed_primitive_root_code([(3, 2), (5, 2)], k) for k in rand.sample(range(1, K+1), K)])
-	S = np.array([lb.primitive_root_code(N, 2, k) for k in rand.sample(range(1, N+1), K)])
+	B = np.repeat(bpsk_data, N, axis=0).T	# shape=(K, N)
+	S = np.array([lb.mixed_primitive_root_code([(3, 2), (5, 2)], k) for k in rand.sample(range(1, K+1), K)])
+	# S = np.array([lb.primitive_root_code(N, 2, k) for k in rand.sample(range(1, N+1), K)])
 	# S = np.array([lb.primitive_root_code(N+1, 2, k)[1:] for k in rand.sample(range(1, N+1), K)])
 	# S = np.array([lb.const_power_code(2, np.random.rand(), N) for _ in range(1, K+1)])
 
-	ROLL = np.random.randint(0, N, K) if _async else np.zeros(K, dtype=int)
+	ROLL = np.random.randint(0, N, K) if _async else np.zeros(K, dtype=int)	# shape=(K)
 
 	T = B * lb.each_row_roll(S, ROLL)
 
@@ -83,7 +90,9 @@ def cdma(K: int, N: int, snr: float, _async: bool, seed: int) -> EachReport:
 	AWGN = lb.gauss_matrix_by_snr(MIXED, snr)
 	X = MIXED + AWGN
 
-	RB = np.repeat(X[None], K, axis=0)*np.conjugate(S)
+	R_ROLL = estimate_roll(X, S, K, N)
+
+	RB = np.repeat(X[None], K, axis=0)*np.conjugate(lb.each_row_roll(S, R_ROLL))
 
 	rbpsk_data = np.mean(RB, axis=1)
 	rbits = np.sign(rbpsk_data.real)
@@ -92,8 +101,8 @@ def cdma(K: int, N: int, snr: float, _async: bool, seed: int) -> EachReport:
 
 	return EachReport(ber=ber, snr=lb.snr(MIXED, AWGN))
 
-N = 11
-K = 2
+N = 15
+K = 3
 _async = False
 
 def do_trial(expected_snr: float):
@@ -110,7 +119,7 @@ def main():
 	DataclassWriter(sys.stdout, [], SummaryReport, delimiter=DELIMITER).write()
 
 	with futu.ProcessPoolExecutor(max_workers=MAX_WORKERS) as executor:
-		futures = [executor.submit(do_trial, expected_snr) for expected_snr in [100]]
+		futures = [executor.submit(do_trial, expected_snr) for expected_snr in np.linspace(1.0, 5.0, 20)]
 		for future in futu.as_completed(futures):
 			DataclassWriter(sys.stdout, [future.result()], SummaryReport, delimiter=DELIMITER).write(skip_header=True)
 
