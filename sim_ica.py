@@ -9,7 +9,7 @@ from dataclass_csv import DataclassWriter
 import concurrent.futures as futu
 import random as rand
 
-DELIMITER="\t"
+DELIMITER=","
 MAX_WORKERS = multiprocessing.cpu_count()-1
 
 lb.set_seed(0)
@@ -56,16 +56,18 @@ class ReportAccumulator:
 K: number of Users
 N: code length
 """
-def ica(K: int, N: int, snr: float, seed: int):
+def ica(K: int, N: int, snr: float, _async: bool, seed: int):
 	lb.set_seed(seed)
 
 	B = lb.random_bits([K, N])
 
-	S = np.array([lb.mixed_primitive_root_code([(53, 2), (19, 2)], k) for k in rand.sample(range(1, N+1), K)])
 	# S = np.array([lb.primitive_root_code(N, 2, k) for k in rand.sample(range(1, N+1), K)])
-	S = np.array([lb.const_power_code(2, np.random.rand(), N) for k in range(1, K+1)])
+	S = np.tile(np.array([lb.mixed_primitive_root_code([(3, 2), (5, 2)], k) for k in rand.sample(range(1, K+1), K)]), N//15)
+	# S = np.array([lb.const_power_code(2, np.random.rand(), N) for k in range(1, K+1)])
 	
-	T = B * S
+	ROLL = np.random.randint(0, N, K) if _async else np.zeros(K, dtype=int)	# shape=(K)
+
+	T = B * lb.each_row_roll(S, ROLL)
 
 	A = lb.random_matrix(K)
 	MIXED = A @ T
@@ -81,7 +83,7 @@ def ica(K: int, N: int, snr: float, seed: int):
 
 	Z = real_P.T @ real_ica_result.Y + imag_P.T @ imag_ica_result.Y * 1j
 
-	RB = np.sign(Z.real*S.real + Z.imag*S.imag)
+	RB = np.sign(Z.real*lb.each_row_roll(S, ROLL).real + Z.imag*lb.each_row_roll(S, ROLL).imag)
 	ber = lb.bit_error_rate(B, RB)
 
 	return EachReport(ber=ber, snr=lb.snr(MIXED, AWGN))
@@ -89,12 +91,13 @@ def ica(K: int, N: int, snr: float, seed: int):
 def main():
 	DataclassWriter(sys.stdout, [], SummaryReport, delimiter=DELIMITER).write()
 
-	N = 1007
-	expected_snr = 30
-	for K in range(2, N):
+	K = 3
+	N = 15*60
+	_async = True
+	for expected_snr in np.linspace(10.0, 50.0, 40):
 		accumlator = ReportAccumulator(K, N)
 		with futu.ProcessPoolExecutor(max_workers=MAX_WORKERS) as executor:
-			futures = [executor.submit(ica, K, N, expected_snr, trial) for trial in range(1000)]
+			futures = [executor.submit(ica, K, N, expected_snr, _async, trial) for trial in range(1000)]
 			for future in futu.as_completed(futures):
 				try:
 					report = future.result()
