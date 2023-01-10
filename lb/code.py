@@ -68,7 +68,7 @@ k: N
 Ψn = q'^n / p'
 Xn = exp(-2j*π*θn*k)*exp(-2j*π*Ψn*k)
 """
-def mixed_primitive_root_code(pq_list: list[tuple[int, int]], k: int):
+def mixed_primitive_root_code(pq_list: list[tuple[int, int]], k: int) -> np.ndarray:
 	code_len = math.lcm(*map(lambda pq: pq[0], pq_list))
 	code = np.ones(code_len, dtype=np.complex128)
 	for p,q in pq_list:
@@ -78,7 +78,7 @@ def mixed_primitive_root_code(pq_list: list[tuple[int, int]], k: int):
 """
 原始根^n符号（先頭に1を含まない）
 """
-def mixed_primitive_root_code_without1(pq_list: list[tuple[int, int]], k: int):
+def mixed_primitive_root_code_without1(pq_list: list[tuple[int, int]], k: int) -> np.ndarray:
 	code_len = math.lcm(*map(lambda pq: pq[0]-1, pq_list))
 	code = np.ones(code_len, dtype=np.complex128)
 	for p,q in pq_list:
