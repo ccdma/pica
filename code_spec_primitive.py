@@ -22,14 +22,14 @@ def find_p_xxx(q: int=2):
 	return p_list
 
 q = 2
-pq_list = [(3, 2), (11, 2)]
+pq_list = [(11, 2), (13, 2)]
 
 code_len = lb.mixed_primitive_root_code(pq_list, 1).shape[0]
 
 k_range = range(1, code_len+1)
 
-code_1 = lb.mixed_primitive_root_code(pq_list, 1)
-code_2 = lb.mixed_primitive_root_code(pq_list, 3)
+# code_1 = lb.mixed_primitive_root_code(pq_list, 2)
+# code_2 = lb.mixed_primitive_root_code(pq_list, 3)
 
 # # 相互相関が最大となる値を集めたk^2テーブル
 # c_max = []
@@ -55,10 +55,13 @@ code_2 = lb.mixed_primitive_root_code(pq_list, 3)
 # csv書き出し
 # np.savetxt("a.csv", c_max, delimiter=",")
 
+code_1 = lb.const_power_code(2, np.sqrt(2), 1000)
+code_2 = lb.const_power_code(2, np.sqrt(3), 1000)
+
 # 相関をプロット
 plt.plot(np.abs(lb.cross_correlations(code_1, code_2)), lw=1)
 # plt.title(f"cross correlation of X(from=sqrt(2))")
-# plt.ylim(0, 1)
+plt.ylim(0, 0.5)
 plt.xlabel("roll")
 plt.ylabel("correlation")
 plt.tight_layout()
