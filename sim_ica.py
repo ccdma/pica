@@ -92,10 +92,10 @@ def ica(K: int, N: int, snr: float, _async: bool, seed: int):
 def main():
 	DataclassWriter(sys.stdout, [], SummaryReport, delimiter=DELIMITER).write()
 
-	K = 30
+	K = 20
 	N = 1000
 	_async = True
-	for expected_snr in [50.0]: #np.linspace(10.0, 50.0, 40):
+	for expected_snr in np.linspace(10.0, 50.0, 40):
 		accumlator = ReportAccumulator(K, N)
 		with futu.ProcessPoolExecutor(max_workers=MAX_WORKERS) as executor:
 			futures = [executor.submit(ica, K, N, expected_snr, _async, trial) for trial in range(1000)]
