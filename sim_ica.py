@@ -4,7 +4,7 @@ ICAを用いたシュミレーション
 import matplotlib.pyplot as plt
 import numpy as np
 import lb
-import dataclasses, sys, warnings, multiprocessing, time
+import dataclasses, sys, warnings, multiprocessing, time, math
 from dataclass_csv import DataclassWriter
 import concurrent.futures as futu
 import random as rand
@@ -43,11 +43,16 @@ class ReportAccumulator:
 		self.complete += 1
 	
 	def summary(self):
+		ber = math.inf
+		snr = math.inf
+		if self.complete:
+			ber = self.ber_sum/self.complete
+			snr = self.snr_sum/self.complete		
 		return SummaryReport(
 			K=self.K,
 			N=self.N,
-			ber=self.ber_sum/self.complete,
-			snr=self.snr_sum/self.complete,
+			ber=ber,
+			snr=snr,
 			complete=self.complete,
 			time=time.perf_counter()-self.start_time
 		)
@@ -92,20 +97,22 @@ def ica(K: int, N: int, snr: float, _async: bool, seed: int):
 def main():
 	DataclassWriter(sys.stdout, [], SummaryReport, delimiter=DELIMITER).write()
 
-	K = 20
-	N = 1000
-	_async = True
-	for expected_snr in np.linspace(10.0, 50.0, 40):
-		accumlator = ReportAccumulator(K, N)
-		with futu.ProcessPoolExecutor(max_workers=MAX_WORKERS) as executor:
-			futures = [executor.submit(ica, K, N, expected_snr, _async, trial) for trial in range(1000)]
-			for future in futu.as_completed(futures):
-				try:
-					report = future.result()
-					accumlator.add(report)
-				except Warning as e:
-					pass
-		DataclassWriter(sys.stdout, [accumlator.summary()], SummaryReport, delimiter=DELIMITER).write(skip_header=True)
+	# N = 3000
+	expected_snr = 36.0
+	_async = False
+	for N in [1000, 2000, 3000]:
+		for K in range(2, 60):
+			accumlator = ReportAccumulator(K, N)
+			with futu.ProcessPoolExecutor(max_workers=MAX_WORKERS) as executor:
+				futures = [executor.submit(ica, K, N, expected_snr, _async, trial) for trial in range(1000)]
+				for future in futu.as_completed(futures):
+					try:
+						report = future.result()
+						accumlator.add(report)
+					except Warning as e:
+						pass
+			DataclassWriter(sys.stdout, [accumlator.summary()], SummaryReport, delimiter=DELIMITER).write(skip_header=True)
+			if accumlator.summary().ber > 0.1: break
 
 if __name__ == '__main__':
 	with warnings.catch_warnings():
