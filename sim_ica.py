@@ -62,8 +62,9 @@ def ica(K: int, N: int, snr: float, _async: bool, seed: int):
 	B = lb.random_bits([K, N])
 
 	# S = np.array([lb.primitive_root_code(N, 2, k) for k in rand.sample(range(1, N+1), K)])
-	S = np.tile(np.array([lb.mixed_primitive_root_code([(3, 2), (5, 2)], k) for k in rand.sample(range(1, K+1), K)]), N//15)
-	# S = np.array([lb.const_power_code(2, np.random.rand(), N) for k in range(1, K+1)])
+	# S = np.tile(np.array([lb.mixed_primitive_root_code([(3, 2), (5, 2)], k) for k in rand.sample(range(1, K+1), K)]), N//15)
+	S = np.array([lb.const_power_code(2, np.random.rand(), N) for k in range(1, K+1)])
+	# S = np.array(np.exp(1j*2*np.pi*np.random.rand(K, N)))	# 疑似乱数
 	
 	ROLL = np.random.randint(0, N, K) if _async else np.zeros(K, dtype=int)	# shape=(K)
 
@@ -91,10 +92,10 @@ def ica(K: int, N: int, snr: float, _async: bool, seed: int):
 def main():
 	DataclassWriter(sys.stdout, [], SummaryReport, delimiter=DELIMITER).write()
 
-	K = 3
-	N = 15*60
+	K = 30
+	N = 1000
 	_async = True
-	for expected_snr in np.linspace(10.0, 50.0, 40):
+	for expected_snr in [50.0]: #np.linspace(10.0, 50.0, 40):
 		accumlator = ReportAccumulator(K, N)
 		with futu.ProcessPoolExecutor(max_workers=MAX_WORKERS) as executor:
 			futures = [executor.submit(ica, K, N, expected_snr, _async, trial) for trial in range(1000)]
