@@ -97,22 +97,20 @@ def ica(K: int, N: int, snr: float, _async: bool, seed: int):
 def main():
 	DataclassWriter(sys.stdout, [], SummaryReport, delimiter=DELIMITER).write()
 
-	# N = 3000
+	N = 1000
 	expected_snr = 36.0
 	_async = False
-	for N in [1000, 2000, 3000]:
-		for K in range(2, 60):
-			accumlator = ReportAccumulator(K, N)
-			with futu.ProcessPoolExecutor(max_workers=MAX_WORKERS) as executor:
-				futures = [executor.submit(ica, K, N, expected_snr, _async, trial) for trial in range(1000)]
-				for future in futu.as_completed(futures):
-					try:
-						report = future.result()
-						accumlator.add(report)
-					except Warning as e:
-						pass
-			DataclassWriter(sys.stdout, [accumlator.summary()], SummaryReport, delimiter=DELIMITER).write(skip_header=True)
-			if accumlator.summary().ber > 0.1: break
+	for K in range(2, 60):
+		accumlator = ReportAccumulator(K, N)
+		with futu.ProcessPoolExecutor(max_workers=MAX_WORKERS) as executor:
+			futures = [executor.submit(ica, K, N, expected_snr, _async, int(trial*K*N*expected_snr)) for trial in range(1000)]
+			for future in futu.as_completed(futures):
+				try:
+					report = future.result()
+					accumlator.add(report)
+				except Warning as e:
+					pass
+		DataclassWriter(sys.stdout, [accumlator.summary()], SummaryReport, delimiter=DELIMITER).write(skip_header=True)
 
 if __name__ == '__main__':
 	with warnings.catch_warnings():
