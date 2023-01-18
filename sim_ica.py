@@ -17,14 +17,12 @@ lb.set_seed(0)
 @dataclasses.dataclass
 class EachReport:
 	ber: int
-	snr: float
 
 @dataclasses.dataclass
 class SummaryReport:
 	K: int
 	N: int
 	ber: float
-	snr: float
 	complete: int
 	time: float
 
@@ -33,26 +31,21 @@ class ReportAccumulator:
 	K: int
 	N: int
 	ber_sum = 0
-	snr_sum = 0
 	complete = 0
 	start_time = time.perf_counter()
 
 	def add(self, report: EachReport):
 		self.ber_sum += report.ber
-		self.snr_sum += report.snr
 		self.complete += 1
 	
 	def summary(self):
 		ber = math.inf
-		snr = math.inf
 		if self.complete:
 			ber = self.ber_sum/self.complete
-			snr = self.snr_sum/self.complete		
 		return SummaryReport(
 			K=self.K,
 			N=self.N,
 			ber=ber,
-			snr=snr,
 			complete=self.complete,
 			time=time.perf_counter()-self.start_time
 		)
@@ -61,7 +54,7 @@ class ReportAccumulator:
 K: number of Users
 N: code length
 """
-def ica(K: int, N: int, snr: float, _async: bool, seed: int):
+def ica(K: int, N: int, stddev: float, _async: bool, seed: int):
 	lb.set_seed(seed)
 
 	B = lb.random_bits([K, N])
@@ -78,7 +71,7 @@ def ica(K: int, N: int, snr: float, _async: bool, seed: int):
 	A = lb.random_matrix(K)
 	MIXED = A @ T
 
-	AWGN = lb.gauss_matrix_by_snr(MIXED, snr)
+	AWGN = np.random.normal(0, stddev, MIXED.shape) + 1j*np.random.normal(0, stddev, MIXED.shape)
 	X = MIXED + AWGN
 
 	real_ica_result = lb.fast_ica_by_sklearn(X.real)
@@ -92,18 +85,18 @@ def ica(K: int, N: int, snr: float, _async: bool, seed: int):
 	RB = np.sign(Z.real*lb.each_row_roll(S, ROLL).real + Z.imag*lb.each_row_roll(S, ROLL).imag)
 	ber = lb.bit_error_rate(B, RB)
 
-	return EachReport(ber=ber, snr=lb.snr(MIXED, AWGN))
+	return EachReport(ber=ber)
 
 def main():
 	DataclassWriter(sys.stdout, [], SummaryReport, delimiter=DELIMITER).write()
 
 	N = 1000
-	expected_snr = 36.0
+	stddev = 0.01
 	_async = False
 	for K in range(2, 60):
 		accumlator = ReportAccumulator(K, N)
 		with futu.ProcessPoolExecutor(max_workers=MAX_WORKERS) as executor:
-			futures = [executor.submit(ica, K, N, expected_snr, _async, int(trial*K*N*expected_snr)) for trial in range(1000)]
+			futures = [executor.submit(ica, K, N, stddev, _async, int(trial*K*N*stddev)) for trial in range(1000)]
 			for future in futu.as_completed(futures):
 				try:
 					report = future.result()
