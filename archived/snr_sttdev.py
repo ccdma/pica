@@ -1,6 +1,8 @@
 """
 WARNING
 """
+import sys; sys.path.append(".")
+
 from numpy import sqrt
 import lb
 import numpy as np
