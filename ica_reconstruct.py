@@ -28,14 +28,15 @@ USERS = sources.shape[0]
 A = lb.random_matrix(USERS)
 
 mixed = A @ sources
-mixed = min_max(mixed, axis=1)
 
 fast_ica_res = lb.fast_ica(mixed)
 P = lb.estimate_circulant_matrix(A, fast_ica_res.W)
 reconstruct = P.T @ fast_ica_res.Y
+
+mixed = min_max(mixed, axis=1)
 reconstruct = min_max(reconstruct, axis=1)
 
-# plot result
+# return-mapのプロット
 nrows = 1
 ncols = 3
 fig, axes = plt.subplots(nrows=nrows, ncols=ncols, figsize=(ncols*5,nrows*5))
