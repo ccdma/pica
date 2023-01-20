@@ -39,21 +39,23 @@ reconstruct = min_max(reconstruct, axis=1)
 # return-mapのプロット
 nrows = 1
 ncols = 3
-fig, axes = plt.subplots(nrows=nrows, ncols=ncols, figsize=(ncols*5,nrows*5))
+fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(15, 6))
 # fig.gca().set_aspect('equal','datalim')
+
+fsize = {"fontsize": 18}
 
 for code in sources:
 	ax = axes[0]
 	ax.scatter(code[:-1], code[1:])
-	ax.set_title("sources")
+	ax.set_title("source", **fsize)
 for code in mixed:
 	ax = axes[1]
 	ax.scatter(code[:-1], code[1:])
-	ax.set_title("mixed")
+	ax.set_title("mixed", **fsize)
 for code in reconstruct:
 	ax = axes[2]
 	ax.scatter(code[:-1], code[1:])
-	ax.set_title("reconstruct")
+	ax.set_title("reconstruct", **fsize)
 
 fig.tight_layout()
 plt.show()
