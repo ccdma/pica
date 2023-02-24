@@ -1,7 +1,12 @@
 import numpy as np
 import random, math
 import numba
-from functools import lru_cache
+from typing import TypeAlias
+
+"""
+原始根 (p,q)
+"""
+pq: TypeAlias = tuple[int, int]
 
 """
 平均二乗誤差
