@@ -1,7 +1,7 @@
 """
 原始根^n符号の特性を観察する
 """
-import lb, itertools, matplotlib
+import lb, itertools, random
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -16,10 +16,11 @@ def find_pq(max_p: int, max_q: int) -> list[lb.pq]:
 				founds.append((p, q))
 	return founds
 
-pq_comb = itertools.combinations(find_pq(20, 3), 2)
-pq_comb = filter(lambda pq_set: pq_set[0][0] != pq_set[1][0], pq_comb)
+pq_comb = itertools.combinations(find_pq(60, 5), 2)
+pq_comb = list(filter(lambda pq_set: pq_set[0][0] == pq_set[1][0], pq_comb))
+random.shuffle(pq_comb)
 
-fig, axes = plt.subplots(ncols=4, nrows=3)	# plt.Figure, plt.Axes[]
+fig, axes = plt.subplots(ncols=4, nrows=2)	# plt.Figure, plt.Axes[]
 
 for ax, pq_set in zip(
 		itertools.chain.from_iterable(axes),
