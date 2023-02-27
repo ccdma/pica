@@ -1,7 +1,7 @@
 import numpy as np
 import random, math
 import numba
-from typing import TypeAlias
+from typing import TypeAlias, Iterator
 
 """
 原始根 (p,q)
@@ -95,6 +95,17 @@ def is_primitive_root(p: int, q: int) -> bool:
 		if prev == 1:
 			return False
 	return True
+
+"""
+与えられた範囲で原始根のリスト(p,q)を返す
+"""
+def find_pq(p_iter: Iterator[int], q_iter: Iterator[int]) -> list[pq]:
+	founds: list[pq] = []	
+	for q in q_iter:
+		for p in p_iter:
+			if is_primitive_root(p, q):
+				founds.append((p, q))
+	return founds
 
 """
 各行に対してrollを行う（非同期CDMAで利用する想定）
