@@ -4,15 +4,10 @@
 import lb
 
 p_start = 2
-p_range = range(p_start, p_start+300)
-
 q_start = 2
-q_range = range(q_start, q_start+4)
 
-result = []
-for q in q_range:
-	for p in p_range:
-		if lb.is_primitive_root(p, q):
-			result.append((p, q))
-
+result = lb.find_pq(
+	range(p_start, p_start+300),
+	range(q_start, q_start+4)
+)
 print(result)
