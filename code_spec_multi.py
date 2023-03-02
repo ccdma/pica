@@ -5,11 +5,11 @@ import lb, itertools, random
 import numpy as np
 import matplotlib.pyplot as plt
 
-pq_comb = list(itertools.combinations(lb.find_pq(range(20), [2]), 2)) + list(itertools.combinations(lb.find_pq(range(20), [3]), 2))
-pq_comb = list(filter(lambda pq_set: pq_set[0][0] != pq_set[1][0], pq_comb))
-# random.shuffle(pq_comb)
+pq_comb = list(itertools.combinations(lb.find_pq(range(40, 70), range(10)), 1)) # + list(itertools.combinations(lb.find_pq(range(20), [3]), 2))
+# pq_comb = list(filter(lambda pq_set: pq_set[0][0] != pq_set[1][0], pq_comb))
+random.shuffle(pq_comb)
 
-fig, axes = plt.subplots(ncols=5, nrows=2)	# plt.Figure, plt.Axes[]
+fig, axes = plt.subplots(ncols=3, nrows=1, squeeze=False)	# plt.Figure, plt.Axes[]
 
 for ax, pq_set in zip(
 		itertools.chain.from_iterable(axes),
