@@ -26,8 +26,13 @@ code_1 = lb.mixed_primitive_root_code(pq_set, 1)
 # plt.show()
 
 # # IQをプロット
+<<<<<<< HEAD
 plt.scatter(code_1.real, code_1.imag, s=0.8)
 plt.plot(code_1.real, code_1.imag, lw=0.3)
+=======
+plt.scatter(code_1.real, code_1.imag, s=1.0)
+plt.plot(code_1.real, code_1.imag, lw=0.4)
+>>>>>>> 74e551eed4b754a17c6cab2f33d618859995d0e6
 # plt.title(f"IQ plot of (p, q)={pq_set}: X(k1=1) and X(k2=2,roll=1)")
 plt.gca().set_aspect('equal','datalim')
 plt.show()
