@@ -12,7 +12,7 @@ def self_correlations(code):
 	return lb.cross_correlations(code, code)[1:]
 
 q = 2
-pq_set = [(11, 2), (3, 2)]
+pq_set = [(67, 2)]
 
 code_len = lb.mixed_primitive_root_code(pq_set, 1).shape[0]
 

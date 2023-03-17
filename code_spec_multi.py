@@ -9,14 +9,14 @@ pq_comb = list(itertools.combinations(lb.find_pq(range(40, 70), range(10)), 1))
 # pq_comb = list(filter(lambda pq_set: pq_set[0][0] != pq_set[1][0], pq_comb))
 random.shuffle(pq_comb)
 
-fig, axes = plt.subplots(ncols=3, nrows=1, squeeze=False)	# plt.Figure, plt.Axes[]
+fig, axes = plt.subplots(ncols=1, nrows=1, squeeze=False)	# plt.Figure, plt.Axes[]
 
 for ax, pq_set in zip(
 		itertools.chain.from_iterable(axes),
 		pq_comb
 	):
 	code_1 = lb.mixed_primitive_root_code(pq_set, 1)
-	ax.scatter(code_1.real, code_1.imag, s=0.8)
+	ax.scatter(code_1.real, code_1.imag, s=0.4)
 	ax.plot(code_1.real, code_1.imag, lw=0.2)
 	ax.set_title(f"{pq_set}")
 	ax.set_aspect('equal')
