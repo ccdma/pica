@@ -5,7 +5,7 @@ import lb, itertools, random
 import numpy as np
 import matplotlib.pyplot as plt
 
-pq_comb = list(itertools.combinations(lb.find_pq(range(40, 70), range(10)), 1)) # + list(itertools.combinations(lb.find_pq(range(20), [3]), 2))
+pq_comb = list(itertools.combinations(lb.find_pq(range(40, 70), range(10)), 1))
 # pq_comb = list(filter(lambda pq_set: pq_set[0][0] != pq_set[1][0], pq_comb))
 random.shuffle(pq_comb)
 
