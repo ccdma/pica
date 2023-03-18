@@ -11,8 +11,7 @@ np.set_printoptions(linewidth=1000)
 def self_correlations(code):
 	return lb.cross_correlations(code, code)[1:]
 
-q = 2
-pq_set = [(67, 2)]
+pq_set = [(11, 2)]
 
 code_len = lb.mixed_primitive_root_code(pq_set, 1).shape[0]
 
@@ -20,10 +19,6 @@ k_range = range(1, code_len+1)
 
 code_1 = lb.mixed_primitive_root_code(pq_set, 4)
 code_2 = lb.mixed_primitive_root_code(pq_set, 1)
-
-print(lb.args_index(lb.mixed_primitive_root_code(pq_set, 1), code_len))
-print(lb.args_index(lb.mixed_primitive_root_code(pq_set, 2), code_len))
-
 
 corr_max = np.array([
 	[
