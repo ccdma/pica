@@ -17,8 +17,7 @@ t0 = 4
 i1 = np.mod(phi_1*k1 - np.roll(phi_1, -t0)*k2, pq1[0])
 i2 = np.mod(phi_2*k1 - np.roll(phi_2, -t0)*k2, pq2[0])
 
-print(i1)
-print(i2)
+# print(i1)
+# print(i2)
 
 # print(np.sum(np.exp(-2j*np.pi*i1/pq1[0]))*np.sum(np.exp(-2j*np.pi*i2/pq2[0])))
-
