@@ -11,14 +11,14 @@ np.set_printoptions(linewidth=1000)
 def self_correlations(code):
 	return lb.cross_correlations(code, code)[1:]
 
-pq_set = [(3, 2), (17, 5)]
+pq_set = [(5, 2), (17, 5)]
 
 code_len = lb.mixed_primitive_root_code(pq_set, 1).shape[0]
 
 k_range = range(1, code_len+1)
 
 code_1 = lb.mixed_primitive_root_code(pq_set, 1)
-code_2 = lb.mixed_primitive_root_code(pq_set, 4)
+code_2 = lb.mixed_primitive_root_code(pq_set, 6)
 
 corr_max = np.array([
 	[
@@ -28,11 +28,11 @@ corr_max = np.array([
 np.savetxt("a.csv", corr_max, delimiter="\t") # fmt='%.5f'
 
 # 相関をプロット
-# plt.plot(np.abs(lb.cross_correlations(code_1, code_2)), lw=1)
-# plt.title(f"cross correlation {pq_set}")
-# plt.xlabel("roll")
-# plt.ylabel("correlation")
-# plt.show()
+plt.plot(np.abs(lb.cross_correlations(code_1, code_2)), lw=1)
+plt.title(f"cross correlation {pq_set}")
+plt.xlabel("roll")
+plt.ylabel("correlation")
+plt.show()
 
 # # IQをプロット
 # plt.scatter(code_1.real, code_1.imag, s=1.0)
