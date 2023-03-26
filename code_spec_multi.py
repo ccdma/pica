@@ -5,7 +5,7 @@ import lb, itertools, random
 import numpy as np
 import matplotlib.pyplot as plt
 
-pq_comb = list(itertools.combinations(lb.find_pq(range(40, 70), range(10)), 1))
+pq_comb = list(itertools.combinations(lb.find_pq(range(2, 10), range(2, 4)), 2))
 # pq_comb = list(filter(lambda pq_set: pq_set[0][0] != pq_set[1][0], pq_comb))
 random.shuffle(pq_comb)
 
@@ -16,9 +16,7 @@ for ax, pq_set in zip(
 		pq_comb
 	):
 	code_1 = lb.mixed_primitive_root_code(pq_set, 1)
-	ax.scatter(code_1.real, code_1.imag, s=0.4)
-	ax.plot(code_1.real, code_1.imag, lw=0.2)
+	lb.plt.iq(ax, code_1)
 	ax.set_title(f"{pq_set}")
-	ax.set_aspect('equal')
 
 plt.show()
