@@ -100,7 +100,7 @@ def is_primitive_root(p: int, q: int) -> bool:
 与えられた範囲で原始根のリスト(p,q)を返す
 """
 def find_pq(p_iter: Iterator[int], q_iter: Iterator[int]) -> list[pq]:
-	founds: list[pq] = []	
+	founds: list[pq] = []
 	for q in q_iter:
 		for p in p_iter:
 			if is_primitive_root(p, q):

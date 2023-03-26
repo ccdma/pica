@@ -22,3 +22,21 @@ i2 = np.mod(phi_2*k1 - np.roll(phi_2, -t0)*k2, pq2[0])
 print(i2)
 
 # print(np.sum(np.exp(-2j*np.pi*i1/pq1[0]))*np.sum(np.exp(-2j*np.pi*i2/pq2[0])))
+
+for pq1 in lb.find_pq(range(2, 60), range(2, 60)):
+    p = pq1[0]
+    phi_1 = lb.args_index(lb.primitive_root_code(pq1[0], pq1[1], 1), pq1[0])
+    phi = list(map(int, phi_1.tolist()))
+    for t1 in range(p):
+        for t2 in range(p):
+            exp = phi[(t1+t2)%p]
+            # print(t1, t2, exp, end=" ")
+            if t1 == 0:
+                assert exp == (phi[t2])%p
+            else:
+                if t1 + t2 < p:
+                    assert exp == (phi[t1]*phi[(t2+1)%p])%p
+                if t1 + t2 == p:
+                    assert exp == 0
+                if t1 + t2 > p:
+                    assert exp == (phi[t1]*phi[t2])%p
