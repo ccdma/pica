@@ -4,10 +4,10 @@ import matplotlib.pyplot as plt
 np.set_printoptions(linewidth=1000)
 
 pq1 = (11, 2)
-phi_1 = lb.args_index(lb.primitive_root_code(pq1[0], pq1[1], 1), pq1[0])
+phi_1 = lb.args_idx(lb.primitive_root_code(pq1[0], pq1[1], 1), pq1[0])
 
 pq2 = (3, 2)
-phi_2 = lb.args_index(lb.primitive_root_code(pq2[0], pq2[1], 1), pq2[0])
+phi_2 = lb.args_idx(lb.primitive_root_code(pq2[0], pq2[1], 1), pq2[0])
 
 k1 = 2
 k2 = 1
@@ -25,7 +25,7 @@ print(i2)
 
 for pq1 in lb.find_pq(range(2, 60), range(2, 60)):
     p = pq1[0]
-    phi_1 = lb.args_index(lb.primitive_root_code(pq1[0], pq1[1], 1), pq1[0])
+    phi_1 = lb.args_idx(lb.primitive_root_code(pq1[0], pq1[1], 1), pq1[0])
     phi = list(map(int, phi_1.tolist()))
     for t1 in range(p):
         for t2 in range(p):

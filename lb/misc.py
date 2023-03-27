@@ -144,7 +144,7 @@ def cross_correlations(code_1: np.ndarray, code_2: np.ndarray):
 """
 0~2πにおいてsepで分割した際のindexを評価
 """
-def args_index(const_power_code: np.ndarray, sep: int):
+def args_idx(const_power_code: np.ndarray, sep: int):
 	args = -np.angle(const_power_code)
 	idxes = np.mod(np.rint(args/(2*np.pi) * sep), sep) 
 	return np.where(idxes == sep, 0, idxes)
