@@ -83,10 +83,8 @@ def x_is_prime(n):
 def is_primitive_root(p: int, q: int) -> bool:
 	if q >= p:
 		return False
-	if p <= 1:
+	if p <= 2:
 		return False
-	if p == 2:
-		return True
 	if not x_is_prime(p):
 		return False
 	prev = 1
