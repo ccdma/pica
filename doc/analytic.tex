@@ -1,0 +1,327 @@
+%% Document class
+% platex and uplatex supports multibyte
+\documentclass[platex]{jsarticle}
+
+%% Preamble
+% include graphicx with option 'dvipdfmx'. supports png, jpeg.
+\usepackage[dvipdfmx]{graphicx}
+% since 2005, tex includes amsmath in its library by default.
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{physics}
+\usepackage{empheq}
+\usepackage{cases}
+
+\newcommand{\figref}[1]{Fig. \ref{#1}}
+\newcommand{\expb}[1]{\exp \biggl[ #1 \biggr]}
+\newcommand{\ssubparagraph}[1]{\subparagraph{$\quad$□ #1}}
+\newtheorem{thm}{Theorem}
+% \newtheorem*{thm*}{Theorem}
+
+%% Info
+% \title{\vspace{-2cm}カオス拡散符号による並列伝送方式の検討}
+% \author{数理工学専攻 物理統計学分野 M1 松山拓生}
+\date{2023/11/04}
+
+\begin{document}
+
+\subsection{定義}
+
+\subsubsection{原始根による周期的な偏角}
+
+\begin{align}
+\phi_m(t) &=
+\begin{cases}
+0 & t \equiv 0 \pmod{p_m} \\
+q_m^{(t\bmod p_m)-1}　\bmod　p_m & \text{otherwise} 
+\end{cases} \\
+\theta_m(t) &= \frac{\phi_m(t)}{p_m}
+\end{align}
+ただし、$(p_m,q_m)$は原始根。
+
+\subsubsection{原始根符号}
+
+\begin{gather}
+X_{k,m}(t) = \expb{-2 \pi j \theta_m(t) k} \label{def:g2}
+\end{gather}
+\eqref{def:g2}で定義される式は、通常の原始根符号 \\
+ただし原始根符号の場合、$0 \leq t \leq p_m -1$である
+
+\subsubsection{原始根2符号}
+
+\begin{align}Y_k(t) &= X_{k,m=1}(t) X_{k,m=2}(t) \label{def:gg} \\
+&= \expb{-2 \pi j \theta_1(t) k} \expb{-2 \pi j \theta_2(t) k} \\
+&= \expb{-2 \pi j \biggl( \theta_1(t)+\theta_2(t) \biggr) k} \label{def:gg-sum}
+\end{align}
+\eqref{def:gg}で定義される式は、原始根2符号 \\
+ただし原始根2符号の場合、$0 \leq t \leq p_1p_2 -1$である
+
+
+\subsection{符号が等間隔に分布すること}
+\eqref{def:gg-sum}に従い、原始根$(p_1,q_1),(p_2,q_2)$を用いて、$\theta \quad (s.t. \quad 0 \leq \theta < 1)$のみを持ち出すと、（前回の数値計算結果から$p_1 \not = p_2$）を前提条件としておく）
+
+\begin{align}
+\theta_1(t)+\theta_2(t) &= \frac{\phi_1(t)}{p_1} + \frac{\phi_2(t)}{p_2} \\
+&= \frac{\phi_1(t)p_2 + \phi_2(t)p_1}{p_1p_2} 
+\end{align} 
+
+となるから、$\phi_1(t)p_2 + \phi_2(t)p_1 \pmod{p_1p_2}$（$0\leq t \leq p_1p_2-1$）が$\{0, 1, \cdots, p_1p_2-1\}$を巡回することを示せば良い。
+
+ここで、
+\begin{gather}    
+\phi_1(t)p_2 + \phi_2(t)p_1 \equiv \phi_1(t')p_2 + \phi_2(t')p_1 \pmod{p_1p_2} \\
+\Longleftrightarrow \quad 
+(\phi_1(t) - \phi_1(t')) p_2 + (\phi_2(t) - \phi_2(t'))p_1 \equiv 0 \label{eq:t-t}
+\end{gather}
+となる条件が、$t\equiv t' \pmod{p_1p_2}$であることが示せれば、$\{0, 1, \cdots, p_1p_2-1\}$を巡回することが言える。
+
+\begin{align}
+\eqref{eq:t-t} \quad
+& \Longleftrightarrow \quad
+(\phi_1(t) - \phi_1(t')) p_2 + (\phi_2(t) - \phi_2(t'))p_1 \equiv 0 \pmod{p_1p_2} \\
+& \Longleftrightarrow \quad
+\begin{cases}
+(\phi_1(t) - \phi_1(t')) p_2 + (\phi_2(t) - \phi_2(t'))p_1 \equiv 0 \pmod{p_1} \\
+(\phi_1(t) - \phi_1(t')) p_2 + (\phi_2(t) - \phi_2(t'))p_1 \equiv 0 \pmod{p_2}
+\end{cases} \\
+& \Longleftrightarrow \quad
+\begin{cases}
+(\phi_1(t) - \phi_1(t')) p_2 \equiv 0 \pmod{p_1} \\
+(\phi_2(t) - \phi_2(t')) p_1 \equiv 0 \pmod{p_2}　
+\end{cases} \\
+& \Longleftrightarrow \quad
+\begin{cases}
+\phi_1(t) \equiv \phi_1(t') \pmod{p_1} \\
+\phi_2(t) \equiv \phi_2(t') \pmod{p_2}
+\end{cases} \label{eq:equal22}
+\end{align}
+
+$(p_1,q_1),(p_2,q_2)$はそれぞれ原始根であることから、\eqref{eq:equal22}と同値な条件は$t=t'$である。
+
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=16cm]{img/7.png}
+    \caption{$q_1=q_2$の場合のIQプロット}
+    \label{img:7}
+\end{figure}
+
+\subsection{相関特性}
+
+
+\begin{thm}
+\label{th:1}
+$T \in \mathbb{N}, T \geq 2$に対し、
+\begin{gather}
+    \frac{1}{T} \sum_{t=0}^{T-1} \expb { -2 \pi j
+        \frac{t}{T}
+    } = 0
+\end{gather}
+である。なぜなら$z = \exp (-2 \pi j \frac{1}{T})$として、
+\begin{gather}
+z^T = 1 \Longleftrightarrow (z-1)(z^{T-1} + z^{T-2} + \cdots z+1) = 0
+\end{gather}
+であり、$z-1\not=0$であるため。
+\end{thm}
+
+$Y_{k=k_1}(t), Y_{k=k_2}(t)$における、相関特性を調べたい。複素共役との積の和をとり、時間軸でのズレ（$0 \leq \forall t_0 \leq p_1p_2-1$）について、
+
+\begin{align}
+    \frac{1}{p_1p_2} & \sum_{t=0}^{p_1p_2-1} Y_{k=k_1}(t) \overline{Y_{k=k_2}(t+t_0)} \\
+    &= \frac{1}{p_1p_2} \sum_{t=0}^{p_1p_2-1}
+        \expb{-2 \pi j \biggl( \theta_1(t)+\theta_2(t) \biggr) k_1}
+        \expb{2 \pi j \biggl( \theta_1(t+t_0)+\theta_2(t+t_0) \biggr) k_2} \\
+    &= \frac{1}{p_1p_2} \sum_{t=0}^{p_1p_2-1} 
+        \expb{-2 \pi j
+            \biggl[
+                \biggl( \theta_1(t)+\theta_2(t) \biggr) k_1 -
+                \biggl( \theta_1(t+t_0)+\theta_2(t+t_0) \biggr) k_2
+            \biggr]
+        } \\
+    &= \frac{1}{p_1p_2} 
+    \biggl( 
+        \sum_{t=0}^{p_1-1} \expb{-2 \pi j
+            \biggl(
+                \theta_1(t) k_1 - \theta_1(t+t_0) k_2
+            \biggr)
+        }
+    \biggr)
+    \biggl( 
+        \sum_{t=0}^{p_2-1} \expb{-2 \pi j
+            \biggl(
+                \theta_2(t) k_1 - \theta_2(t+t_0) k_2
+            \biggr)
+        }
+    \biggr) \\ 
+    &= \frac{1}{p_1p_2} 
+    \biggl( 
+        \sum_{t=0}^{p_1-1} \expb{-2 \pi j
+            \frac{\phi_1(t) k_1 - \phi_1(t+t_0) k_2}{p_1}
+        }
+    \biggr)
+    \biggl( 
+        \sum_{t=0}^{p_2-1} \expb{-2 \pi j
+            \frac{\phi_2(t) k_1 - \phi_2(t+t_0) k_2}{p_2}
+        }
+    \biggr)
+\end{align}
+
+この変形から、各$0 \leq t_0 \leq p_m-1$（1周期分）において
+\begin{gather}
+f(t; k_1, k_2, t_0, m) = \phi_m(t) k_1 - \phi_m(t+t_0) k_2 \pmod{p_m} \label{eq:cross-core}
+\end{gather}
+が、$0\leq t \leq p_m -1$と変化させたときに$\{ 0, 1\cdots p_m-1 \}$を巡回するか？を示すことで、theorem\ref{th:1}より、直交性を示すことが出来そうである。
+
+\subsubsection{$k_2 \equiv 0 \pmod{p_m}$の場合}
+
+$0 \leq t,t' \leq p_m-1$について、
+
+\begin{gather}
+\phi_m(t) k_1 - \phi_m(t+t_0) k_2 \equiv \phi_m(t') k_1 - \phi_m(t'+t_0) k_2 \pmod{p_m} \\
+\Longleftrightarrow (\phi_m(t) -\phi_m(t')) k_1 \equiv (\phi_m(t+t_0) - \phi_m(t'+t_0)) k_2 \label{eq:146} 
+\end{gather}
+
+を仮定する。これが$t=t'$と同値であることが言えれば、等分布性の証明と同様に\eqref{eq:cross-core}が巡回することが示せる。
+
+\begin{gather}
+\eqref{eq:146} 
+\Longleftrightarrow 
+(\phi_m(t) -\phi_m(t')) k_1 \equiv 0 \pmod{p_m} \label{eq:147} 
+\end{gather}
+である。このとき、$k_1 \equiv 0$であれば、$t=t'$に限らず\eqref{eq:147}は成立し、巡回しないことが示される。
+逆に$k_1 \not\equiv 0$であれば、原始根の性質から\eqref{eq:147}と$t=t'$は同値であり、巡回が示される。
+
+\subsubsection{$k_1 \equiv 0 \pmod{p_m}$の場合}
+対称性より、$k_2 \equiv 0 \pmod{p_m}$の場合と同様である。
+
+\subsubsection{$k_1,k_2 \not\equiv 0 \pmod{p_m}, p_m > 3$の場合}
+
+\eqref{eq:cross-core}を$\phi_m(t)$について整理すると
+
+\begin{align}
+\eqref{eq:cross-core}
+= \begin{cases}
+    -k_2\phi_m(t_0) & \text{if} \quad t = 0 \\
+    \phi_m(t)  \left[ k_1 - k_2 \times
+    \left( \begin{array}{ll}
+        \phi_m(t_0+1) & \quad \text{if} \quad t+t_0 < p_m \\
+        0  & \quad \text{if} \quad t+t_0 = p_m \\
+        \phi_m(t_0) & \quad \text{if} \quad t+t_0 > p_m 
+    \end{array} \right)
+    \right] & \text{otherwise}
+\end{cases}
+\label{eq:expand}
+\end{align}
+
+ここで、$k_1 \equiv k_2 n \pmod{p_m}$なる$0\leq n \leq p_m-1$がただ一つ存在することから、$k_1 \equiv k_2 \phi_m(x) \pmod{p_m}$を満たす$0\leq x \leq p_m-1$もただ一つ存在する。
+
+\paragraph{$k_1 \not\equiv k_2 \phi_m(t_0+1)$かつ$k_1 \not\equiv k_2 \phi_m(t_0)$のとき}
+$k_1 \not\equiv 0$より、$k_2\phi_m(t_0) \not\equiv 0$であり、\eqref{eq:expand}が任意の$t$において0を取り得なくなるため、巡回しない。
+
+\paragraph{$k_1 \equiv k_2 \phi_m(t_0+1)$のとき}
+$k_1 \not\equiv k_2 \phi_m(t_0)$である。
+
+\ssubparagraph{$t_0 < p_m-2$のとき}
+$t+t_0<p_m$を満たす$t\geq 1$は2つ以上存在する。これらの$t$で$\eqref{eq:expand}=0$となることから、\eqref{eq:expand}は2つ以上の点で0を取り、巡回しない。
+
+\ssubparagraph{$t_0 = p_m-2$のとき}
+$\phi_m$のスカラー倍は0を除くシフトであることに注意すると、$k_1 - k_2 \phi_m(t_0) \not\equiv 0$を基底としたとき、即ち
+\begin{subnumcases}{\{0, 1, 2, \cdots, p_m-1 \} \Longleftrightarrow}
+        \phi_m(0) \times (k_1-k_2\phi_m(t_0)) \quad (=0) \\
+        \phi_m(1) \times (k_1-k_2\phi_m(t_0)) \label{99-1} \\
+        \phi_m(2) \times (k_1-k_2\phi_m(t_0)) \label{99-2} \\
+        \phi_m(3) \times (k_1-k_2\phi_m(t_0)) \label{99-3} \\
+        \cdots \nonumber \\
+        \phi_m(p_m-1) \times (k_1-k_2\phi_m(t_0))
+\end{subnumcases}
+を$t$の一巡
+\begin{subnumcases}{f(t) = }
+        -k_2 \phi_m(t_0) & if $t=0$ \label{98-0} \\
+        \phi_m(1) \times 0 \quad (=0) & if $t=1$ \label{98-1} \\
+        \phi_m(2) \times k_1 & if $t=2$ \label{98-2} \\
+        \phi_m(3) \times (k_1-k_2\phi_m(t_0)) & if $t=3$ \label{98-3} \\
+        \cdots \nonumber \\
+        \phi_m(p_m-1) \times (k_1-k_2\phi_m(t_0)) & if $t=p_m-1$
+\end{subnumcases}
+から表現しようとすると、\eqref{99-1}に\eqref{98-2}を、\eqref{99-2}に\eqref{98-0}を割り当てる必要がある。よって、
+\begin{align}
+    \begin{cases}
+        (k_1-k_2\phi_m(t_0)) \equiv q_mk_1 \\
+        q_m(k_1-k_2\phi_m(t_0)) \equiv -k_2\phi_m(t_0)
+    \end{cases}
+    \Longleftrightarrow \quad
+    \begin{cases}
+        q_m^2 k_1 \equiv -k_2 \phi_m(t_0) \Longleftrightarrow q_m^3 +1 \equiv 0 \\
+        q_m^2-q_m+1\equiv 0
+    \end{cases}
+\end{align}
+となる。ここで$q_m^3\equiv-1 \Longrightarrow q_m^6 \equiv 1$となり原始根の性質とフェルマーの小定理より、これを満たすのは$p_m = 7 (=6+1)$のみとなる。
+
+\ssubparagraph{$t_0 = p_m-1$のとき}
+$t+t_0<p_m$を満たす$t\geq 1$は存在せず、$k_1 \not\equiv k_2 \phi_m(t_0)$,$k_1 \not\equiv 0$,$-k_2 \phi_m(t_0)\not\equiv 0$から、任意の$t$で$\eqref{eq:expand}=0$にはならない。よって巡回しない。
+
+
+\paragraph{$k_1 \equiv k_2 \phi_m(t_0)$のとき}
+$k_1 \not\equiv k_2 \phi_m(t_0+1)$である。
+
+\ssubparagraph{$t_0 > 2$のとき}
+$t+t_0>p_m$を満たす$t\geq 1$は2つ以上存在する。これらの$t$で$\eqref{eq:expand}=0$となることから、\eqref{eq:expand}は2つ以上の点で0を取り、巡回しない。
+
+\ssubparagraph{$t_0 = 2$のとき}
+\begin{subnumcases}{\{0, 1, 2, \cdots, p_m-1 \} \Longleftrightarrow}
+        \phi_m(0) \times (k_1-k_2\phi_m(t_0+1)) \quad (=0) \\
+        \phi_m(1) \times (k_1-k_2\phi_m(t_0+1)) \\
+        \cdots \nonumber \\
+        \phi_m(p_m-3) \times (k_1-k_2\phi_m(t_0+1)) \label{97-p3} \\
+        \phi_m(p_m-2) \times (k_1-k_2\phi_m(t_0+1)) \label{97-p2} \\
+        \phi_m(p_m-1) \times (k_1-k_2\phi_m(t_0+1)) \label{97-p1}
+\end{subnumcases}
+を$t$の一巡
+\begin{subnumcases}{f(t) = }
+        -k_2 \phi_m(t_0) & if $t=0$ \label{96-0} \\
+        \phi_m(1) \times (k_1-k_2\phi_m(t_0+1)) & if $t=1$ \label{96-1} \\
+        \cdots \nonumber \\
+        \phi_m(p_m-3) \times (k_1-k_2\phi_m(t_0+1)) & if $t=p_m-3$ \label{96-p3} \\
+        \phi_m(p_m-2) \times k_1  & if $t=p_m-2$ \label{96-p2} \\
+        \phi_m(p_m-1) \times 0 \quad (=0) & if $t=p_m-1$
+\end{subnumcases}
+から表現しようとすると、\eqref{97-p1}に\eqref{96-p2}を、\eqref{97-p2}に\eqref{96-0}を割り当てる必要がある。即ち必要十分条件は
+\begin{align}
+    \begin{cases}
+        q_m^{p_m-2}(k_1-k_2\phi_m(t_0+1)) \equiv q_m^{p_m-3} k_1 \\
+        q_m^{p_m-3}(k_1-k_2\phi_m(t_0+1)) \equiv -k_2\phi_m(t_0)
+    \end{cases}
+    \Longleftrightarrow \quad
+    \begin{cases}
+        k_1 \equiv -k_2 q_m^3 \phi_m(t_0) \Longleftrightarrow q_m^3 +1 \equiv 0 \\
+        q_m^2-q_m+1\equiv 0
+    \end{cases}
+\end{align}
+となる。前の議論と同様に、やはり$p_m\not=7$では巡回しない。
+
+\ssubparagraph{$t_0 = 1$のとき}
+$t+t_0>p_m$を満たす$t\geq 1$は存在せず、任意の$t$で$\eqref{eq:expand}=0$にはならない。よって巡回しない。
+
+\ssubparagraph{$t_0 = 0$のとき}
+$\phi_m(t_0)\equiv 0$となり$k_1 \not\equiv 0$に反するため、仮定が不適切。
+
+\subsubsection{$k_1,k_2 \not\equiv 0 \pmod{p_m}, p_m = 3$の場合}
+$q_m=2$、$k_1,k_2 \equiv \{1,2\}$の場合のみである。対称性より、
+\begin{itemize}
+    \item $k_1\equiv k_2 \equiv 1$
+    \item $k_1\equiv k_2 \equiv 2$
+    \item $k_1 \equiv 1, k_2 \equiv 2$
+\end{itemize}
+の3パターンについて調べれば良い。結果はTable.\ref{tab:p3}の通りで、$(k_1, k_2) \equiv (1, 2)$の場合に各$t_0$において一巡するため、直交する。
+
+\begin{table}[h]
+\centering
+\begin{tabular}{llll}
+                      & $t_0 = 0$ & $t_0 = 1$ & $t_0 = 2$ \\
+$(k_1, k_2) = (1, 1)$ & $[0,0,0]$ & $[1,1,1]$ & $[2,2,2]$ \\
+$(k_1, k_2) = (2, 2)$ & $[0,0,0]$ & $[1,1,1]$ & $[2,2,2]$ \\
+$(k_1, k_2) = (1, 2)$ & $[0,2,1]$ & $[1,0,2]$ & $[2,1,0]$
+\end{tabular}
+\caption{$p_m=3$の場合の各条件における$[f(0),f(1),f(2)]$}
+\label{tab:p3}
+\end{table}
+
+\end{document}
