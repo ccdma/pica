@@ -11,14 +11,14 @@ np.set_printoptions(linewidth=1000)
 def self_correlations(code):
 	return lb.cross_correlations(code, code)[1:]
 
-pq_set = [(5, 2), (7, 3)]
+pq_set = [(3, 2), (5, 2)]
 
 code_len = lb.mixed_primitive_root_code(pq_set, 1).shape[0]
 
 k_range = range(1, code_len+1)
 
-code_1 = lb.mixed_primitive_root_code(pq_set, 1)
-code_2 = lb.mixed_primitive_root_code(pq_set, 3)
+code_1 = lb.mixed_primitive_root_code(pq_set, 5)
+code_2 = lb.mixed_primitive_root_code(pq_set, 1)
 
 corr_max = np.array([
 	[
