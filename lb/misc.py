@@ -146,3 +146,11 @@ def args_idx(const_power_code: np.ndarray, sep: int):
 	args = -np.angle(const_power_code)
 	idxes = np.mod(np.rint(args/(2*np.pi) * sep), sep) 
 	return np.where(idxes == sep, 0, idxes)
+
+"""
+与えられたリストをシャッフルしたものを返す
+"""
+def shuffled(x):
+	xcopy = list(x)
+	random.shuffle(xcopy)
+	return xcopy
