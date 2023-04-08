@@ -14,7 +14,7 @@ class CodeGen:
 		return lb.mixed_primitive_root_code(self.pq_set, self.k)
 	
 	def __str__(self) -> str:
-		return f"(p,q)={self.pq_set[0]},{self.pq_set[0]}"
+		return f"(p,q)={self.pq_set[0]},{self.pq_set[1]}"
 
 gens: list[CodeGen] = [CodeGen([(3, 2), (5, 2)], 1), CodeGen([(5, 2), (7, 3)], 1)]
 fig, axes = plt.subplots(ncols=len(gens), nrows=1, squeeze=False)	# plt.Figure, plt.Axes[]
