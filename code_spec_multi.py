@@ -22,8 +22,8 @@ fig, axes = plt.subplots(ncols=len(gens), nrows=1, squeeze=False)	# plt.Figure, 
 for i in range(len(gens)):
 	code_1 = gens[i].code()
 	ax = axes[0][i]
-	lb.plt.iq(ax, code_1, s=3, lw=1)
-	ax.set_title(f"{gens[i]}", fontsize=10)
+	lb.plt.iq(ax, code_1, s=8, lw=1)
+	ax.set_title(f"{gens[i]}", fontsize=11)
 
 fig.tight_layout()
-plt.show()
+fig.savefig("1.png", dpi=120)
