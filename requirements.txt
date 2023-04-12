@@ -2,3 +2,5 @@ scikit-learn
 numpy
 scipy
 numba
+matplotlib
+dataclass_csv
