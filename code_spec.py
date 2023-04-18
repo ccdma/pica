@@ -38,5 +38,5 @@ fig, ax = plt.subplots()
 
 # # IQをプロット
 lb.plt.iq(ax, code_1, s=8, lw=1)
-ax.set_title(f"IQ plot of (p, q)={pq_set}")
+# ax.set_title(f"IQ plot of (p, q)={pq_set}")
 plt.show()

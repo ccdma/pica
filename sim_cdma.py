@@ -77,9 +77,8 @@ def cdma(K: int, N: int, snr: float, _async: bool, seed: int) -> EachReport:
 	
 	B = np.repeat(bpsk_data, N, axis=0).T	# shape=(K, N)
 	# S = np.array([lb.mixed_primitive_root_code([(3, 2), (5, 2)], k) for k in rand.sample(range(1, K+1), K)])
-	# S = np.array([lb.primitive_root_code(N, 2, k) for k in rand.sample(range(1, N+1), K)])
-	# S = np.array([lb.primitive_root_code(N+1, 2, k)[1:] for k in rand.sample(range(1, N+1), K)])
-	S = np.array([lb.const_power_code(2, np.random.rand(), N) for _ in range(1, K+1)])
+	S = np.array([lb.weyl_code(low_k=np.random.rand(), delta_k=np.random.rand(), length=N) for _ in range(1, K+1)])
+	# S = np.array([lb.const_power_code(2, np.random.rand(), N) for _ in range(1, K+1)])
 
 	ROLL = np.random.randint(0, N, K) if _async else np.zeros(K, dtype=int)	# shape=(K)
 
