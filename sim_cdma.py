@@ -19,6 +19,7 @@ lb.set_seed(0)
 class EachReport:
 	ber: int
 	snr: float
+	stddev: float
 
 @dataclasses.dataclass
 class SummaryReport:
@@ -26,6 +27,7 @@ class SummaryReport:
 	N: int
 	ber: float
 	snr: float
+	stddev: float
 	complete: int
 	time: float
 
@@ -35,12 +37,14 @@ class ReportAccumulator:
 	N: int
 	ber_sum = 0
 	snr_sum = 0
+	stddev_sum = 0
 	complete = 0
 	start_time = time.perf_counter()
 
 	def add(self, report: EachReport):
 		self.ber_sum += report.ber
 		self.snr_sum += report.snr
+		self.stddev_sum += report.stddev
 		self.complete += 1
 	
 	def summary(self):
@@ -49,6 +53,7 @@ class ReportAccumulator:
 			N=self.N,
 			ber=self.ber_sum/self.complete,
 			snr=self.snr_sum/self.complete,
+			stddev=self.stddev_sum/self.complete,
 			complete=self.complete,
 			time=time.perf_counter()-self.start_time
 		)
@@ -76,10 +81,10 @@ def cdma(K: int, N: int, snr: float, _async: bool, seed: int) -> EachReport:
 	bpsk_data = np.complex64(bits)
 	
 	B = np.repeat(bpsk_data, N, axis=0).T	# shape=(K, N)
-	# S = np.array([lb.mixed_primitive_root_code([(3, 2), (5, 2)], k) for k in rand.sample(range(1, K+1), K)])
+	S = np.array([lb.mixed_primitive_root_code([(3, 2), (7, 3)], k) for k in rand.sample(range(1, K+1), K)])
 	# S = np.array([lb.primitive_root_code(N, 2, k) for k in rand.sample(range(1, N+1), K)])
 	# S = np.array([lb.primitive_root_code(N+1, 2, k)[1:] for k in rand.sample(range(1, N+1), K)])
-	S = np.array([lb.const_power_code(2, np.random.rand(), N) for _ in range(1, K+1)])
+	# S = np.array([lb.const_power_code(2, np.random.rand(), N) for _ in range(1, K+1)])
 
 	ROLL = np.random.randint(0, N, K) if _async else np.zeros(K, dtype=int)	# shape=(K)
 
@@ -99,15 +104,15 @@ def cdma(K: int, N: int, snr: float, _async: bool, seed: int) -> EachReport:
 
 	ber = lb.bit_error_rate(bits, rbits)
 
-	return EachReport(ber=ber, snr=lb.snr(MIXED, AWGN))
+	return EachReport(ber=ber, snr=lb.snr_of(MIXED, AWGN), stddev=lb.stddev_of(MIXED, snr))
 
-N = 15
+N = 21
 K = 3
 _async = True
 
 def do_trial(expected_snr: float):
 	accumlator = ReportAccumulator(K, N)
-	for trial in range(500000):
+	for trial in range(50000):
 		try:
 			report = cdma(K, N, expected_snr, _async, trial)
 			accumlator.add(report)

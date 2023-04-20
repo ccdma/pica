@@ -92,7 +92,7 @@ def ica(K: int, N: int, snr: float, _async: bool, seed: int):
 	RB = np.sign(Z.real*lb.each_row_roll(S, ROLL).real + Z.imag*lb.each_row_roll(S, ROLL).imag)
 	ber = lb.bit_error_rate(B, RB)
 
-	return EachReport(ber=ber, snr=lb.snr(MIXED, AWGN))
+	return EachReport(ber=ber, snr=lb.snr_of(MIXED, AWGN))
 
 def main():
 	DataclassWriter(sys.stdout, [], SummaryReport, delimiter=DELIMITER).write()
