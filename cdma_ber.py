@@ -2,14 +2,18 @@ import lb, itertools, random, dataclasses
 import numpy as np
 import matplotlib.pyplot as plt
 
-N = 21
+N = 15
 K = 3
-stddevs = np.linspace(0.1, 1.0, 30)
+
+snrs = np.linspace(1.0, 5.0, 20)
+
+stddevs = np.linspace(0.5, 1.0, 30)
 
 ber = []
-for stddev in np.linspace(0.1, 1.0, 30):
+for stddev in stddevs:
 	ber.append(lb.cdma_ber(N, stddev, K))
 
 ber = np.array(ber)
 plt.plot(stddevs, ber)
+plt.yscale('log')
 plt.show()

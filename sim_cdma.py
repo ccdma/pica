@@ -10,7 +10,7 @@ from dataclass_csv import DataclassWriter
 import concurrent.futures as futu
 import random as rand
 
-DELIMITER=","
+DELIMITER="\t"
 MAX_WORKERS = multiprocessing.cpu_count()-1
 
 lb.set_seed(0)
