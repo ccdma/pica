@@ -22,26 +22,21 @@ def log_mean_power(code):
 	return np.log10(mean_power)
 
 """
-SN比を計算
+SN比を計算 [dB]
+https://ja.wikipedia.org/wiki/SN%E6%AF%94
 """
 def snr_of(code, noise):
 	return 10 * (log_mean_power(code) - log_mean_power(noise))
 
 """
-符号と満たしたいSNRからAWGNにおけるstddevを決める
+SNRを指定してガウスノイズ行列を生成
 
 code: 混合後の信号
 """
-def stddev_of(code, snr: float):
+def gauss_matrix_by_snr(code, snr: float):
 	noise_log_mean_power = log_mean_power(code) - snr/10
 	noise_mean_power = 10**noise_log_mean_power
-	return np.sqrt(noise_mean_power/2)
-
-"""
-SNRを指定してガウスノイズ行列を生成
-"""
-def gauss_matrix_by_snr(code, snr: float):
-	stddev = stddev_of(code, snr)
+	stddev = np.sqrt(noise_mean_power/2)
 	return np.random.normal(0, stddev, code.shape) + 1j*np.random.normal(0, stddev, code.shape)
 
 """ 

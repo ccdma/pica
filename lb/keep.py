@@ -15,8 +15,8 @@ def correlation(P: np.ndarray) -> np.ndarray:
 stddev=0の場合、シュミレーションとの一致を確認
 
 N: code of length (array_like)
-stddev: noise stddev
+noise: noise power
 K: number of users (array_like)
 """
-def cdma_ber(N, stddev, K: np.array):
-    return 1/2 * erfc(N/np.sqrt((K-1)*N + stddev**2))
+def cdma_ber(N, noise, K: np.array):
+    return 1/2 * erfc(N/np.sqrt((K-1)*N + noise))

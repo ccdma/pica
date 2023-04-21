@@ -19,7 +19,7 @@ lb.set_seed(0)
 class EachReport:
 	ber: int
 	snr: float
-	stddev: float
+	noise: float	# power of noise
 
 @dataclasses.dataclass
 class SummaryReport:
@@ -27,7 +27,7 @@ class SummaryReport:
 	N: int
 	ber: float
 	snr: float
-	stddev: float
+	noise: float
 	complete: int
 	time: float
 
@@ -37,14 +37,14 @@ class ReportAccumulator:
 	N: int
 	ber_sum = 0
 	snr_sum = 0
-	stddev_sum = 0
+	noise_sum = 0
 	complete = 0
 	start_time = time.perf_counter()
 
 	def add(self, report: EachReport):
 		self.ber_sum += report.ber
 		self.snr_sum += report.snr
-		self.stddev_sum += report.stddev
+		self.noise_sum += report.noise
 		self.complete += 1
 	
 	def summary(self):
@@ -53,7 +53,7 @@ class ReportAccumulator:
 			N=self.N,
 			ber=self.ber_sum/self.complete,
 			snr=self.snr_sum/self.complete,
-			stddev=self.stddev_sum/self.complete,
+			noise=self.noise_sum/self.complete,
 			complete=self.complete,
 			time=time.perf_counter()-self.start_time
 		)
@@ -103,15 +103,16 @@ def cdma(K: int, N: int, snr: float, _async: bool, seed: int) -> EachReport:
 
 	ber = lb.bit_error_rate(bits, rbits)
 
-	return EachReport(ber=ber, snr=lb.snr_of(MIXED, AWGN), stddev=lb.stddev_of(MIXED, snr))
+	return EachReport(ber=ber, snr=lb.snr_of(MIXED, AWGN), noise=np.power(10, lb.log_mean_power(AWGN)))
 
-N = 21
-K = 3
+N = 15
+# K = 3
+expected_snr = 50
 _async = True
 
-def do_trial(expected_snr: float):
+def do_trial(K):
 	accumlator = ReportAccumulator(K, N)
-	for trial in range(500000):
+	for trial in range(100000):
 		try:
 			report = cdma(K, N, expected_snr, _async, trial)
 			accumlator.add(report)
@@ -123,7 +124,7 @@ def main():
 	DataclassWriter(sys.stdout, [], SummaryReport, delimiter=DELIMITER).write()
 
 	with futu.ProcessPoolExecutor(max_workers=MAX_WORKERS) as executor:
-		futures = [executor.submit(do_trial, expected_snr) for expected_snr in np.linspace(1.0, 5.0, 20)]
+		futures = [executor.submit(do_trial, K) for K in range(5, 25)]
 		for future in futu.as_completed(futures):
 			DataclassWriter(sys.stdout, [future.result()], SummaryReport, delimiter=DELIMITER).write(skip_header=True)
 
