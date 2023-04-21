@@ -91,7 +91,7 @@ def cdma(K: int, N: int, snr: float, _async: bool, seed: int) -> EachReport:
 
 	A = np.ones(K)
 	MIXED = T.T @ A
-	AWGN = lb.gauss_matrix_by_snr(MIXED, snr)
+	AWGN = lb.gauss_matrix_by_snr(S, snr, MIXED.shape)
 	X = MIXED + AWGN
 
 	R_ROLL = ROLL #estimate_roll(X, S, K, N)
@@ -103,16 +103,16 @@ def cdma(K: int, N: int, snr: float, _async: bool, seed: int) -> EachReport:
 
 	ber = lb.bit_error_rate(bits, rbits)
 
-	return EachReport(ber=ber, snr=lb.snr_of(MIXED, AWGN), noise=np.power(10, lb.log_mean_power(AWGN)))
+	return EachReport(ber=ber, snr=lb.snr_of(S, AWGN), noise=np.power(10, lb.log_mean_power(AWGN)))
 
-N = 15
-# K = 3
-expected_snr = 50
+N = 63
+# K = 10
+expected_snr = 30
 _async = True
 
 def do_trial(K):
 	accumlator = ReportAccumulator(K, N)
-	for trial in range(100000):
+	for trial in range(10000):
 		try:
 			report = cdma(K, N, expected_snr, _async, trial)
 			accumlator.add(report)
@@ -124,7 +124,7 @@ def main():
 	DataclassWriter(sys.stdout, [], SummaryReport, delimiter=DELIMITER).write()
 
 	with futu.ProcessPoolExecutor(max_workers=MAX_WORKERS) as executor:
-		futures = [executor.submit(do_trial, K) for K in range(5, 25)]
+		futures = [executor.submit(do_trial, K) for K in range(10, 40)]
 		for future in futu.as_completed(futures):
 			DataclassWriter(sys.stdout, [future.result()], SummaryReport, delimiter=DELIMITER).write(skip_header=True)
 
