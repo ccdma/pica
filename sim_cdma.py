@@ -10,7 +10,7 @@ from dataclass_csv import DataclassWriter
 import concurrent.futures as futu
 import random as rand
 
-DELIMITER="\t"
+DELIMITER=","
 MAX_WORKERS = multiprocessing.cpu_count()-1
 
 lb.set_seed(0)
@@ -81,9 +81,9 @@ def cdma(K: int, N: int, snr: float, _async: bool, seed: int) -> EachReport:
 	bpsk_data = np.complex64(bits)
 	
 	B = np.repeat(bpsk_data, N, axis=0).T	# shape=(K, N)
-	S = np.array([lb.mixed_primitive_root_code([(3, 2), (7, 3)], k) for k in rand.sample(range(1, K+1), K)])
+	# S = np.array([lb.mixed_primitive_root_code([(3, 2), (7, 3)], k) for k in rand.sample(range(1, K+1), K)])
 	# S = np.array([lb.weyl_code(low_k=np.random.rand(), delta_k=np.random.rand(), length=N) for _ in range(1, K+1)])
-	# S = np.array([lb.const_power_code(2, np.random.rand(), N) for _ in range(1, K+1)])
+	S = np.array([lb.const_power_code(2, np.random.rand(), N) for _ in range(1, K+1)])
 
 	ROLL = np.random.randint(0, N, K) if _async else np.zeros(K, dtype=int)	# shape=(K)
 
@@ -111,7 +111,7 @@ _async = True
 
 def do_trial(expected_snr: float):
 	accumlator = ReportAccumulator(K, N)
-	for trial in range(50000):
+	for trial in range(500000):
 		try:
 			report = cdma(K, N, expected_snr, _async, trial)
 			accumlator.add(report)
