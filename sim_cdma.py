@@ -81,9 +81,9 @@ def cdma(K: int, N: int, snr: float, _async: bool, seed: int) -> EachReport:
 	bpsk_data = np.complex64(bits)
 	
 	B = np.repeat(bpsk_data, N, axis=0).T	# shape=(K, N)
-	# S = np.array([lb.mixed_primitive_root_code([(3, 2), (7, 3)], k) for k in rand.sample(range(1, K+1), K)])
+	S = np.array([lb.mixed_primitive_root_code([(3, 2), (5, 2)], k) for k in rand.sample(range(1, K+1), K)])
 	# S = np.array([lb.weyl_code(low_k=np.random.rand(), delta_k=np.random.rand(), length=N) for _ in range(1, K+1)])
-	S = np.array([lb.const_power_code(2, np.random.rand(), N) for _ in range(1, K+1)])
+	# S = np.array([lb.const_power_code(2, np.random.rand(), N) for _ in range(1, K+1)])
 
 	ROLL = np.random.randint(0, N, K) if _async else np.zeros(K, dtype=int)	# shape=(K)
 
@@ -105,14 +105,14 @@ def cdma(K: int, N: int, snr: float, _async: bool, seed: int) -> EachReport:
 
 	return EachReport(ber=ber, snr=lb.snr_of(S, AWGN), noise=np.power(10, lb.log_mean_power(AWGN)))
 
-N = 63
-K = 20
-# expected_snr = 30
+N = 15
+K = 3
+# expected_snr = 25.0
 _async = True
 
 def do_trial(expected_snr):
 	accumlator = ReportAccumulator(K, N)
-	for trial in range(10000):
+	for trial in range(10000000):
 		try:
 			report = cdma(K, N, expected_snr, _async, trial)
 			accumlator.add(report)
@@ -124,7 +124,7 @@ def main():
 	DataclassWriter(sys.stdout, [], SummaryReport, delimiter=DELIMITER).write()
 
 	with futu.ProcessPoolExecutor(max_workers=MAX_WORKERS) as executor:
-		futures = [executor.submit(do_trial, expected_snr) for expected_snr in np.linspace(10.0, 40.0, 20)]
+		futures = [executor.submit(do_trial, expected_snr) for expected_snr in np.linspace(1.0, 5.0, 20)]
 		for future in futu.as_completed(futures):
 			DataclassWriter(sys.stdout, [future.result()], SummaryReport, delimiter=DELIMITER).write(skip_header=True)
 

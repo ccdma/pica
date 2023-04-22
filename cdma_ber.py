@@ -1,4 +1,4 @@
-import lb, itertools, random, dataclasses
+import lb
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -7,13 +7,10 @@ K = 3
 
 snrs = np.linspace(1.0, 5.0, 20)
 
-stddevs = np.linspace(0.5, 1.0, 30)
 
-ber = []
-for stddev in stddevs:
-	ber.append(lb.cdma_ber(N, stddev, K))
+ber = lb.ber(np.power(10, snrs/10))
 
 ber = np.array(ber)
-plt.plot(stddevs, ber)
+plt.plot(snrs, ber)
 plt.yscale('log')
 plt.show()

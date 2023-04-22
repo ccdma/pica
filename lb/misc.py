@@ -2,6 +2,7 @@ import numpy as np
 import random, math
 import numba
 from typing import TypeAlias, Iterator
+from scipy.special import erfc
 
 """
 原始根 (p,q)
@@ -158,3 +159,11 @@ def shuffled(x):
 	xcopy = list(x)
 	random.shuffle(xcopy)
 	return xcopy
+
+"""
+SINRよりBERを計算
+
+sinr: array_like
+"""
+def ber(sinr):
+	return 1/2 * erfc(np.sqrt(sinr))
