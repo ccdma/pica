@@ -102,7 +102,6 @@ def cdma(K: int, N: int, snr: float, _async: bool, seed: int) -> EachReport:
 	rbits = np.sign(rbpsk_data.real)
 
 	ber = lb.bit_error_rate(bits, rbits)
-
 	return EachReport(ber=ber, snr=lb.snr_of(S, AWGN), noise=np.power(10, lb.log_mean_power(AWGN)))
 
 N = 15
@@ -112,7 +111,7 @@ _async = True
 
 def do_trial(expected_snr):
 	accumlator = ReportAccumulator(K, N)
-	for trial in range(50000):
+	for trial in range(500000):
 		try:
 			report = cdma(K, N, expected_snr, _async, trial)
 			accumlator.add(report)
