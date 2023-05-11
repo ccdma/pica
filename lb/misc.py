@@ -30,17 +30,24 @@ def snr_of(code, noise):
 	return 10 * (log_mean_power(code) - log_mean_power(noise))
 
 """
+ガウスノイズ行列を生成
+
+stddev
+"""
+def gauss_matrix(stddev: float, shape):
+	return np.random.normal(0, stddev, shape) + 1j*np.random.normal(0, stddev, shape)
+
+"""
 SNRを指定してガウスノイズ行列を生成
 
-code: 混合後の信号
+code: 信号
 snr: dB
+shape
 """
-def gauss_matrix_by_snr(code, snr: float, shape=None):
+def gauss_matrix_by_snr(code, snr: float, shape):
 	noise_log_mean_power = log_mean_power(code) - snr/10
 	noise_mean_power = 10**noise_log_mean_power
 	stddev = np.sqrt(noise_mean_power/2)
-	if not shape:
-		shape = code.shape
 	return np.random.normal(0, stddev, shape) + 1j*np.random.normal(0, stddev, shape)
 
 """ 
