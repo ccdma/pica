@@ -78,7 +78,7 @@ def ica(K: int, N: int, snr: float, _async: bool, seed: int):
 	A = lb.random_matrix(K)
 	MIXED = A @ T
 
-	AWGN = lb.gauss_matrix_by_snr(MIXED, snr, MIXED.shape)	# FIXME: mixする前にすべきな気がする
+	AWGN = lb.d_gauss_matrix_by_snr(MIXED, snr, MIXED.shape)	# FIXME: mixする前にすべきな気がする / 実部のみにかける
 	X = MIXED + AWGN
 
 	real_ica_result = lb.fast_ica_by_sklearn(X.real)

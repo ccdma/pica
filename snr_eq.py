@@ -25,7 +25,7 @@ T = B * lb.each_row_roll(S, ROLL)
 
 A = np.ones(K)
 MIXED = T.T @ A
-AWGN = lb.gauss_matrix_by_snr(S, snr, MIXED.shape)
+AWGN = lb.d_gauss_matrix_by_snr(S, snr, MIXED.shape)
 
 print(lb.snr_of(S, AWGN))
 print(snr)

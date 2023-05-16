@@ -38,17 +38,28 @@ def gauss_matrix(stddev: float, shape):
 	return np.random.normal(0, stddev, shape) + 1j*np.random.normal(0, stddev, shape)
 
 """
-SNRを指定してガウスノイズ行列を生成
+SNRを指定してガウスノイズ行列を生成(deprecated)
 
 code: 信号
 snr: dB
 shape
 """
-def gauss_matrix_by_snr(code, snr: float, shape):
+def d_gauss_matrix_by_snr(code, snr: float, shape):
 	noise_log_mean_power = log_mean_power(code) - snr/10
 	noise_mean_power = 10**noise_log_mean_power
 	stddev = np.sqrt(noise_mean_power/2)
 	return np.random.normal(0, stddev, shape) + 1j*np.random.normal(0, stddev, shape)
+
+"""
+SNRを指定してガウスノイズのパワーを算出
+
+code: 信号
+snr: dB
+"""
+def stddev_of_noise_by_snr(code, snr: float):
+	noise_log_mean_power = log_mean_power(code) - snr/10
+	noise_mean_power = 10**noise_log_mean_power
+	return np.sqrt(noise_mean_power)
 
 """ 
 -0.5~+0.5なる混合行列を作成

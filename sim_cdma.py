@@ -74,7 +74,7 @@ K: number of users
 N: code length
 async: True=チップ同期 / False=ビット同期
 """
-def cdma(K: int, N: int, stddev: float, _async: bool, seed: int) -> EachReport:
+def cdma(K: int, N: int, snr: float, _async: bool, seed: int) -> EachReport:
 	lb.set_seed(seed)
 
 	bits = lb.random_bits([1, K])
@@ -91,7 +91,7 @@ def cdma(K: int, N: int, stddev: float, _async: bool, seed: int) -> EachReport:
 
 	A = np.ones(K)
 	MIXED = T.T @ A
-	AWGN = lb.gauss_matrix(stddev, MIXED.shape)
+	AWGN = np.random.normal(0, lb.stddev_of_noise_by_snr(S, snr), MIXED.shape)
 	X = MIXED + AWGN
 
 	R_ROLL = ROLL #estimate_roll(X, S, K, N)
@@ -104,16 +104,16 @@ def cdma(K: int, N: int, stddev: float, _async: bool, seed: int) -> EachReport:
 	ber = lb.bit_error_rate(bits, rbits)
 	return EachReport(ber=ber, snr=lb.snr_of(S, AWGN), noise=np.power(10, lb.log_mean_power(AWGN)))
 
-N = 15
+# N = 15
 K = 3
-# stddev = 0.5
+snr = 3
 _async = True
 
-def do_trial(stddev):
+def do_trial(N):
 	accumlator = ReportAccumulator(K, N)
 	for trial in range(500000):
 		try:
-			report = cdma(K, N, stddev, _async, trial)
+			report = cdma(K, N, snr, _async, trial)
 			accumlator.add(report)
 		except Warning as e:
 			pass
@@ -123,7 +123,7 @@ def main():
 	DataclassWriter(sys.stdout, [], SummaryReport, delimiter=DELIMITER).write()
 
 	with futu.ProcessPoolExecutor(max_workers=MAX_WORKERS) as executor:
-		futures = [executor.submit(do_trial, stddev) for stddev in np.linspace(0.6, 3.0, 9)]
+		futures = [executor.submit(do_trial, N) for stddev in np.linspace()]
 		for future in futu.as_completed(futures):
 			DataclassWriter(sys.stdout, [future.result()], SummaryReport, delimiter=DELIMITER).write(skip_header=True)
 
