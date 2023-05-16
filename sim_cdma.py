@@ -104,12 +104,9 @@ def cdma(K: int, N: int, snr: float, _async: bool, seed: int) -> EachReport:
 	ber = lb.bit_error_rate(bits, rbits)
 	return EachReport(ber=ber, snr=lb.snr_of(S, AWGN), noise=np.power(10, lb.log_mean_power(AWGN)))
 
-# N = 15
-K = 3
-snr = 3
 _async = True
 
-def do_trial(N):
+def do_trial(K, N, snr):
 	accumlator = ReportAccumulator(K, N)
 	for trial in range(500000):
 		try:
@@ -119,11 +116,15 @@ def do_trial(N):
 			pass
 	return accumlator.summary()
 
+N = 30
+# K = 3
+snr = 30
+
 def main():
 	DataclassWriter(sys.stdout, [], SummaryReport, delimiter=DELIMITER).write()
 
 	with futu.ProcessPoolExecutor(max_workers=MAX_WORKERS) as executor:
-		futures = [executor.submit(do_trial, N) for stddev in np.linspace()]
+		futures = [executor.submit(do_trial, K, N, snr) for K in range(3, 20)]
 		for future in futu.as_completed(futures):
 			DataclassWriter(sys.stdout, [future.result()], SummaryReport, delimiter=DELIMITER).write(skip_header=True)
 
