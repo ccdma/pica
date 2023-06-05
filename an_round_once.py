@@ -1,8 +1,8 @@
 import numpy as np
 import math
 
-P = 19
-DATA = np.int64(range(P))
+P = 13
+DATA = np.arange(P)
 EXP = np.exp(2j * np.pi * np.arange(P) / P)
 
 def comb(r, start, combset):
