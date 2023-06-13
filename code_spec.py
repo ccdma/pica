@@ -34,7 +34,7 @@ fig, ax = plt.subplots()
 # 相関をプロット
 ax.plot(np.abs(lb.cross_correlations(code_1, code_2)), marker='o', lw=1)
 ax.set_title(f"cross correlation (p, q)={pq_set}: k=1,4")
-ax.set_xlabel("lag (t0)")
+ax.set_xlabel("lag (n0)")
 ax.set_ylabel("correlation")
 fig.tight_layout()
 plt.show()

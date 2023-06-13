@@ -14,16 +14,25 @@ class CodeGen:
 		return lb.mixed_primitive_root_code(self.pq_set, self.k)
 	
 	def __str__(self) -> str:
-		return f"(p,q)={self.pq_set[0]},{self.pq_set[1]}"
+		# return f"(p,q)={','.join(map(str, self.pq_set))}"
+		return f"k={self.k}"
 
-gens: list[CodeGen] = [CodeGen([(3, 2), (5, 2)], 1), CodeGen([(5, 2), (7, 3)], 1)]
-fig, axes = plt.subplots(ncols=len(gens), nrows=1, squeeze=False)	# plt.Figure, plt.Axes[]
+plt.rcParams["figure.figsize"] = [18,12]
+
+gens: list[CodeGen] = [CodeGen([(7, 5)], k) for k in range(1, 8)]
+fig, axes = plt.subplots(ncols=len(gens), nrows=len(gens), squeeze=False)	# plt.Figure, plt.Axes[]
 
 for i in range(len(gens)):
-	code_1 = gens[i].code()
-	ax = axes[0][i]
-	lb.plt.iq(ax, code_1, s=8, lw=1)
-	ax.set_title(f"{gens[i]}", fontsize=11)
+	for j in range(len(gens)):
+		code_1 = gens[i].code()
+		code_2 = gens[j].code()
+		ax = axes[i][j]
+		ax.plot(np.abs(lb.cross_correlations(code_1, code_2)), marker='o', lw=1)
+		ax.set_title(f"{gens[i]} x {gens[j]}", fontsize=11)
+		ax.set_xlabel("lag (n0)")
+		ax.set_ylabel("correlation")
+		ax.set_ylim(0, 0.5)
 
+fig.suptitle(f"correlation: (p,q)={','.join(map(str, gens[0].pq_set))}", fontsize=14)
 fig.tight_layout()
 fig.savefig("1.png", dpi=120)
