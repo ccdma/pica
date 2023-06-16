@@ -19,7 +19,7 @@ class CodeGen:
 
 plt.rcParams["figure.figsize"] = [18,12]
 
-gens: list[CodeGen] = [CodeGen([(7, 5)], k) for k in range(1, 8)]
+gens: list[CodeGen] = [CodeGen([(7,3)], k) for k in range(1, 8)]
 fig, axes = plt.subplots(ncols=len(gens), nrows=len(gens), squeeze=False)	# plt.Figure, plt.Axes[]
 
 for i in range(len(gens)):

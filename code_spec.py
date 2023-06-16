@@ -14,14 +14,14 @@ plt.rcParams['font.size'] = 15
 def self_correlations(code):
 	return lb.cross_correlations(code, code)[1:]
 
-pq_set = [(7, 3)]
+pq_set = [(11, 2),(7, 3)]
 
 code_len = lb.mixed_primitive_root_code(pq_set, 1).shape[0]
 
 k_range = range(1, code_len+1)
 
 code_1 = lb.mixed_primitive_root_code(pq_set, 1)
-code_2 = lb.mixed_primitive_root_code(pq_set, 5)
+# code_2 = lb.mixed_primitive_root_code(pq_set, 1)
 
 # np.savetxt("a.csv", np.array([
 # 	[
@@ -32,8 +32,8 @@ code_2 = lb.mixed_primitive_root_code(pq_set, 5)
 fig, ax = plt.subplots()
 
 # 相関をプロット
-ax.plot(np.abs(lb.cross_correlations(code_1, code_2)), marker='o', lw=1)
-ax.set_title(f"cross correlation (p, q)={pq_set}: k=1,4")
+ax.plot(np.abs(lb.cross_correlations(code_1, code_1)), marker='o', lw=1)
+# ax.set_title(f"auto correlation (p, q)={pq_set}: k=1")
 ax.set_xlabel("lag (n0)")
 ax.set_ylabel("correlation")
 fig.tight_layout()
