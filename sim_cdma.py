@@ -106,11 +106,11 @@ def cdma(K: int, N: int, snr: float, _async: bool, seed: int) -> EachReport:
 
 _async = True
 
-def do_trial(K, N, snr):
+def do_trial(K, N, snr, seed):
 	accumlator = ReportAccumulator(K, N)
-	for trial in range(10**9):
+	for trial in range(10**8):
 		try:
-			report = cdma(K, N, snr, _async, trial)
+			report = cdma(K, N, snr, _async, trial*seed)
 			accumlator.add(report)
 		except Warning as e:
 			pass
@@ -118,13 +118,14 @@ def do_trial(K, N, snr):
 
 N = 15
 K = 3
-# snr = 30
+snr = 2
+seed = 1
 
 def main():
 	DataclassWriter(sys.stdout, [], SummaryReport, delimiter=DELIMITER).write()
 
 	with futu.ProcessPoolExecutor(max_workers=MAX_WORKERS) as executor:
-		futures = [executor.submit(do_trial, K, N, snr) for snr in [2]*MAX_WORKERS] # range(-12, 12, 2)
+		futures = [executor.submit(do_trial, K, N, snr, seed) for seed in range(1, MAX_WORKERS*10+1)] # range(-12, 12, 2)
 		for future in futu.as_completed(futures):
 			DataclassWriter(sys.stdout, [future.result()], SummaryReport, delimiter=DELIMITER).write(skip_header=True)
 
