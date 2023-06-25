@@ -116,7 +116,7 @@ def do_trial(K, N, snr, batch_idx):
 			pass
 	return accumlator.summary()
 
-N = 15
+N = 31
 K = 3
 snr = 2
 batch_idx = 1
