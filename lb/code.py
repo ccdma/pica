@@ -2,6 +2,16 @@ import numba
 import numpy as np
 import math
 from .misc import *
+from scipy.signal import max_len_seq
+
+"""
+M系列
+n: 原始多項式の最大次数
+taps: 原始多項式で係数が1となる次数を列挙(最大次数と定数項は不要)
+"""
+def m_code(n, taps=None):
+	mls_b = max_len_seq(n, state=None, taps=taps)[0] # M系列を生成
+	return np.sign(mls_b - 0.5, dtype=np.float64) # {0,1}のビットから{-1,1}のビットに変換
 
 """
 ワイル系列を生成
