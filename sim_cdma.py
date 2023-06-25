@@ -74,8 +74,8 @@ K: number of users
 N: code length
 async: True=チップ同期 / False=ビット同期
 """
-def cdma(K: int, N: int, snr: float, _async: bool, seed: int) -> EachReport:
-	lb.set_seed(seed)
+def cdma(K: int, N: int, snr: float, _async: bool) -> EachReport:
+	# lb.set_seed(seed)
 
 	bits = lb.random_bits([1, K])
 	bpsk_data = np.complex64(bits)
@@ -108,9 +108,10 @@ _async = True
 
 def do_trial(K, N, snr, seed):
 	accumlator = ReportAccumulator(K, N)
+	lb.set_seed(seed)
 	for trial in range(10**8):
 		try:
-			report = cdma(K, N, snr, _async, (trial+1)*(seed+1))
+			report = cdma(K, N, snr, _async)
 			accumlator.add(report)
 		except Warning as e:
 			pass
