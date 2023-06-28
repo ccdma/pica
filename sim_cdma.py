@@ -108,7 +108,7 @@ _async = True
 def do_trial(K, N, snr, batch_idx):
 	accumlator = ReportAccumulator(K, N)
 	lb.set_seed(K + N + snr + batch_idx)
-	for trial in range(10**6):
+	for trial in range(10**8):
 		try:
 			report = cdma(K, N, snr, _async)
 			accumlator.add(report)
