@@ -125,7 +125,7 @@ def main():
 	DataclassWriter(sys.stdout, [], SummaryReport, delimiter=DELIMITER).write()
 
 	with futu.ProcessPoolExecutor(max_workers=MAX_WORKERS) as executor:
-		futures = [executor.submit(do_trial, K, N, snr, batch_idx) for snr in range(MAX_WORKERS*10)] # range(-12, 12, 2) range(MAX_WORKERS*10)
+		futures = [executor.submit(do_trial, K, N, snr, batch_idx) for batch_idx in range(MAX_WORKERS*10)] # range(-12, 12, 2) range(MAX_WORKERS*10)
 		for future in futu.as_completed(futures):
 			DataclassWriter(sys.stdout, [future.result()], SummaryReport, delimiter=DELIMITER).write(skip_header=True)
 
