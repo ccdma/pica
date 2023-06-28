@@ -27,6 +27,7 @@ for taps1 in allcomb(taps_all):
         if len(funique(corr)) == 3:
             print(taps1, taps2)
 
-# plt.plot(lb.cross_correlations(mls(n, taps=[1,3]), mls(n, taps=[1,3])))
+# plt.plot(lb.cross_correlations(lb.m_code(n, taps=[4,3,2]), lb.m_code(n, taps=[2])))
 plt.plot(lb.cross_correlations(lb.m_code(n, taps=[4,3,2]), lb.m_code(n, taps=[2])))
+plt.xlabel("lag")
 plt.show()
