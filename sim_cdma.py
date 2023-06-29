@@ -74,15 +74,16 @@ K: number of users
 N: code length
 async: True=チップ同期 / False=ビット同期
 """
-def cdma(K: int, N: int, snr: float, _async: bool) -> EachReport:
+def cdma(K: int, N: int, snr: float, _async: bool, batch_idx: int, trial: int) -> EachReport:
+	lb.set_seed(batch_idx*trial)
 	bits = lb.random_bits([1, K])
 	bpsk_data = np.complex64(bits)
 	
 	B = np.repeat(bpsk_data, N, axis=0).T	# shape=(K, N)
 	# S = np.array([lb.weyl_code(low_k=np.random.rand(), delta_k=np.random.rand(), length=N) for _ in range(1, K+1)])
-	S = np.array([lb.mixed_primitive_root_code([(3, 2), (5, 2)], k) for k in rand.sample([1, 2, 3], K)])
+	# S = np.array([lb.mixed_primitive_root_code([(3, 2), (5, 2)], k) for k in rand.sample([1, 2, 3], K)])
 	# S = np.array([lb.const_power_code(2, np.random.rand(), N) for _ in range(1, K+1)])
-	# S = np.array([lb.m_code(5, taps=[4,3,2]) * np.roll(lb.m_code(5, taps=[2]), k) for k in rand.sample(range(N), K)]) 	# Gold
+	S = np.array([lb.m_code(5, taps=[4,3,2]) * np.roll(lb.m_code(5, taps=[2]), k) for k in rand.sample(range(N), K)]) 	# Gold
 
 	ROLL = np.random.randint(0, N, K) if _async else np.zeros(K, dtype=int)	# shape=(K)
 
@@ -107,16 +108,15 @@ _async = True
 
 def do_trial(K, N, snr, batch_idx):
 	accumlator = ReportAccumulator(K, N)
-	lb.set_seed(K + N + snr + batch_idx)
-	for trial in range(10**8):
+	for trial in range(10**6):
 		try:
-			report = cdma(K, N, snr, _async)
+			report = cdma(K, N, snr, _async, batch_idx, trial)
 			accumlator.add(report)
 		except Warning as e:
 			pass
 	return accumlator.summary()
 
-N = 15
+N = 31
 K = 3
 snr = 2
 batch_idx = 1
@@ -125,7 +125,7 @@ def main():
 	DataclassWriter(sys.stdout, [], SummaryReport, delimiter=DELIMITER).write()
 
 	with futu.ProcessPoolExecutor(max_workers=MAX_WORKERS) as executor:
-		futures = [executor.submit(do_trial, K, N, snr, batch_idx) for batch_idx in range(MAX_WORKERS*10)] # range(-12, 12, 2) range(MAX_WORKERS*10)
+		futures = [executor.submit(do_trial, K, N, snr, batch_idx) for snr in range(-12, 12, 2)] # range(-12, 12, 2) range(MAX_WORKERS*10)
 		for future in futu.as_completed(futures):
 			DataclassWriter(sys.stdout, [future.result()], SummaryReport, delimiter=DELIMITER).write(skip_header=True)
 
