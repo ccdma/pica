@@ -20,8 +20,12 @@ code_len = lb.mixed_primitive_root_code(pq_set, 1).shape[0]
 
 k_range = range(1, code_len+1)
 
-code_1 = lb.mixed_primitive_root_code(pq_set, 1)
+# code_1 = lb.mixed_primitive_root_code(pq_set, 1)
 # code_2 = lb.mixed_primitive_root_code(pq_set, 1)
+
+m1 = lb.m_code(5, [4,3,2])
+
+code_1 = lb.m_code(5, [4,3,2]) * np.roll(lb.m_code(5, taps=[2]), 1)
 
 # np.savetxt("a.csv", np.array([
 # 	[
