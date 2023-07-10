@@ -116,10 +116,10 @@ def do_trial(K, N, snr, batch_idx):
 			pass
 	return accumlator.summary()
 
-TRIAL = 10**7
+TRIAL = 10**8
 N = 15
 K = 4
-snr = 0
+snr = -2
 batch_idx = 1
 
 def main():

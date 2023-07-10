@@ -23,9 +23,19 @@ k_range = range(1, code_len+1)
 # code_1 = lb.mixed_primitive_root_code(pq_set, 1)
 # code_2 = lb.mixed_primitive_root_code(pq_set, 1)
 
-m1 = lb.m_code(5, [4,3,2])
+def kasami_decimated(m_code: np.ndarray):
+	N = m_code.shape[0]
+	n = int(math.log2(N+1))
+	nd2p1 = 2**(n//2)+1
+	code = []
+	for i in range(N):
+		code.append(m_code[(nd2p1*(i+1)-1)%N])
+	return np.array(code)
 
-code_1 = lb.m_code(5, [4,3,2]) * np.roll(lb.m_code(5, taps=[2]), 1)
+m1 = lb.m_code(4, [1])
+
+code_1 = m1*kasami_decimated(m1)
+code_2 = m1*np.roll(kasami_decimated(m1), 1)
 
 # np.savetxt("a.csv", np.array([
 # 	[
@@ -36,8 +46,8 @@ code_1 = lb.m_code(5, [4,3,2]) * np.roll(lb.m_code(5, taps=[2]), 1)
 fig, ax = plt.subplots()
 
 # 相関をプロット
-ax.plot(np.abs(lb.cross_correlations(code_1, code_1)), marker='o', lw=1)
-# ax.set_title(f"auto correlation (p, q)={pq_set}: k=1")
+ax.plot(np.abs(lb.cross_correlations(code_1, code_2)), marker='o', lw=1, color="orange")
+ax.set_title(f"cross correlation")
 ax.set_xlabel("lag (n0)")
 ax.set_ylabel("correlation")
 fig.tight_layout()
