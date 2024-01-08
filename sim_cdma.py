@@ -81,10 +81,10 @@ def cdma(K: int, N: int, snr: float, _async: bool, batch_idx: int, trial: int) -
 	
 	B = np.repeat(bpsk_data, N, axis=0).T	# shape=(K, N)
 	# S = np.array([lb.weyl_code(low_k=np.random.rand(), delta_k=np.random.rand(), length=N) for _ in range(1, K+1)])
-	# S = np.array([lb.mixed_primitive_root_code([(3, 2), (5, 2)], k) for k in rand.sample([1, 2, 3, 5], K)])
+	S = np.array([lb.mixed_primitive_root_code([(3, 2), (5, 2)], k) for k in rand.sample([1, 2, 3, 5, 4, 6, 7, 8, 9, 10, 11, 12][:K], K)])
 	# S = np.array([lb.const_power_code(2, np.random.rand(), N) for _ in range(1, K+1)])
 	# S = np.array([lb.m_code(5, taps=[4,3,2]) * np.roll(lb.m_code(5, taps=[2]), k) for k in rand.sample(range(N), K)]) 	# Gold
-	S = np.complex64([lb.random_bits([N]) for _ in range(K) ]) # random
+	# S = np.complex64([lb.random_bits([N]) for _ in range(K) ]) # random
 
 	ROLL = np.random.randint(0, N, K) if _async else np.zeros(K, dtype=int)	# shape=(K)
 
@@ -117,17 +117,17 @@ def do_trial(K, N, snr, batch_idx):
 			pass
 	return accumlator.summary()
 
-TRIAL = 10**5
+TRIAL = 10**7
 N = 15
-K = 4
-snr = 2
+# K = 3
+snr = -4
 batch_idx = 1
 
 def main():
 	DataclassWriter(sys.stdout, [], SummaryReport, delimiter=DELIMITER).write()
 
 	with futu.ProcessPoolExecutor(max_workers=MAX_WORKERS) as executor:
-		futures = [executor.submit(do_trial, K, N, snr, batch_idx) for snr in range(-12, 12, 2)] # range(-12, 12, 2) range(MAX_WORKERS*10)
+		futures = [executor.submit(do_trial, K, N, snr, batch_idx) for K in range(3, 12, 1)] # range(-12, 12, 2) range(MAX_WORKERS*10)
 		for future in futu.as_completed(futures):
 			DataclassWriter(sys.stdout, [future.result()], SummaryReport, delimiter=DELIMITER).write(skip_header=True)
 

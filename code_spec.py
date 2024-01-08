@@ -14,7 +14,7 @@ plt.rcParams['font.size'] = 15
 def self_correlations(code):
 	return lb.cross_correlations(code, code)[1:]
 
-pq_set = [(11, 2),(7, 3)]
+pq_set = [(53, 2)]
 
 code_len = lb.mixed_primitive_root_code(pq_set, 1).shape[0]
 
@@ -46,14 +46,14 @@ m1 = lb.m_code(4, [1])
 fig, ax = plt.subplots()
 
 # 相関をプロット
-ax.plot(np.abs(lb.cross_correlations(code_1, code_1)), marker='o', lw=1, color="orange")
-ax.set_title(f"cross correlation")
-ax.set_xlabel("lag (n0)")
-ax.set_ylabel("correlation")
-fig.tight_layout()
-plt.show()
+# ax.plot(np.abs(lb.cross_correlations(code_1, code_1)), marker='o', lw=1, color="orange")
+# ax.set_title(f"cross correlation")
+# ax.set_xlabel("lag (n0)")
+# ax.set_ylabel("correlation")
+# fig.tight_layout()
+# plt.show()
 
 # # IQをプロット
-# lb.plt.iq(ax, code_1, s=8, lw=1)
-# ax.set_title(f"IQ plot of (p, q)={pq_set}")
-# plt.show()
+lb.plt.iq(ax, code_1, s=0.4, lw=0.2)
+ax.set_title(f"IQ plot of (p, q)={pq_set}")
+plt.show()
