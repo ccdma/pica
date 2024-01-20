@@ -81,7 +81,9 @@ def cdma(K: int, N: int, snr: float, _async: bool, batch_idx: int, trial: int) -
 	
 	B = np.repeat(bpsk_data, N, axis=0).T	# shape=(K, N)
 	# S = np.array([lb.weyl_code(low_k=np.random.rand(), delta_k=np.random.rand(), length=N) for _ in range(1, K+1)])
-	S = np.array([lb.mixed_primitive_root_code([(3, 2), (5, 2)], k) for k in rand.sample([1, 2, 3, 5, 4, 6, 7, 8, 9, 10, 11, 12][:K], K)])
+	# S = np.array([lb.mixed_primitive_root_code([(3, 2), (5, 2)], k) for k in rand.sample([1, 2, 3, 5, 4, 6, 7, 8, 9, 10, 11, 12][:K], K)])
+	# S = np.array([lb.mixed_primitive_root_code([(3, 2), (7, 3)], k) for k in rand.sample([1, 2, 3, 7, 4, 6, 5, 8, 9, 10, 11, 12][:K], K)])
+	S = np.array([lb.mixed_primitive_root_code([(3, 2), (11, 2)], k) for k in rand.sample([1, 2, 3, 11, 4, 6, 5, 8, 9, 10, 7, 12][:K], K)])
 	# S = np.array([lb.const_power_code(2, np.random.rand(), N) for _ in range(1, K+1)])
 	# S = np.array([lb.m_code(5, taps=[4,3,2]) * np.roll(lb.m_code(5, taps=[2]), k) for k in rand.sample(range(N), K)]) 	# Gold
 	# S = np.complex64([lb.random_bits([N]) for _ in range(K) ]) # random
@@ -117,8 +119,8 @@ def do_trial(K, N, snr, batch_idx):
 			pass
 	return accumlator.summary()
 
-TRIAL = 10**7
-N = 15
+TRIAL = 10**6
+N = 33
 # K = 3
 snr = -4
 batch_idx = 1

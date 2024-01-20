@@ -8,6 +8,6 @@ def linext(start: int, len: int = 1) -> typing.Iterator[int]:
 
 result = lb.find_pq(
 	linext(2, 600),
-	linext(2, 1)
+	linext(3, 1)
 )
 print(result)

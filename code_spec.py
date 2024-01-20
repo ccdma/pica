@@ -14,7 +14,7 @@ plt.rcParams['font.size'] = 15
 def self_correlations(code):
 	return lb.cross_correlations(code, code)[1:]
 
-pq_set = [(53, 2)]
+pq_set = [(7, 3), (3,2)]
 
 code_len = lb.mixed_primitive_root_code(pq_set, 1).shape[0]
 
@@ -32,7 +32,7 @@ def kasami_decimated(m_code: np.ndarray):
 		code.append(m_code[(nd2p1*(i+1)-1)%N])
 	return np.array(code)
 
-m1 = lb.m_code(4, [1])
+# m1 = lb.m_code(4, [1])
 
 # code_1 = m1*kasami_decimated(m1)
 # code_2 = m1*np.roll(kasami_decimated(m1), 1)
