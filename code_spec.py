@@ -14,7 +14,7 @@ plt.rcParams['font.size'] = 15
 def self_correlations(code):
 	return lb.cross_correlations(code, code)[1:]
 
-pq_set = [(17,3), (29,3)]
+pq_set = [(13,2), (19,2)]
 
 code_len = lb.mixed_primitive_root_code(pq_set, 1).shape[0]
 
@@ -59,7 +59,7 @@ fig, ax = plt.subplots()
 # plt.show()
 
 # ## return map
-code_target = code_1.real
+code_target = code_1.imag
 ax.scatter(code_target[:-1], code_target[1:], s=4)
 ax.set_xlim(-1, 1)
 ax.set_ylim(-1, 1)
@@ -70,6 +70,6 @@ for i in range(code_len-2):
 	ax.axhline(code_target[i+1], min(xrange), max(xrange), color="black", lw=0.1)
 	yrange = (0.5, (code_target[i+1]+1)/2)
 	ax.axvline(code_target[i], min(yrange), max(yrange), color="black", lw=0.1)
-ax.set_title(f"real part")
+ax.set_title(f"imaginary part")
 fig.tight_layout()
 plt.show()
