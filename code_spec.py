@@ -14,7 +14,7 @@ plt.rcParams['font.size'] = 15
 def self_correlations(code):
 	return lb.cross_correlations(code, code)[1:]
 
-pq_set = [(7, 3), (3,2)]
+pq_set = [(17,3), (29,3)]
 
 code_len = lb.mixed_primitive_root_code(pq_set, 1).shape[0]
 
@@ -54,6 +54,22 @@ fig, ax = plt.subplots()
 # plt.show()
 
 # # IQをプロット
-lb.plt.iq(ax, code_1, s=0.4, lw=0.2)
-ax.set_title(f"IQ plot of (p, q)={pq_set}")
+# lb.plt.iq(ax, code_1, s=5, lw=1)
+# ax.set_title(f"(p,q)={','.join(map(str, pq_set))}")
+# plt.show()
+
+# ## return map
+code_target = code_1.real
+ax.scatter(code_target[:-1], code_target[1:], s=4)
+ax.set_xlim(-1, 1)
+ax.set_ylim(-1, 1)
+ax.set_xlabel("Y[n]")
+ax.set_ylabel("Y[n+1]")
+for i in range(code_len-2):
+	xrange = (0.5, (code_target[i]+1)/2)
+	ax.axhline(code_target[i+1], min(xrange), max(xrange), color="black", lw=0.1)
+	yrange = (0.5, (code_target[i+1]+1)/2)
+	ax.axvline(code_target[i], min(yrange), max(yrange), color="black", lw=0.1)
+ax.set_title(f"real part")
+fig.tight_layout()
 plt.show()
